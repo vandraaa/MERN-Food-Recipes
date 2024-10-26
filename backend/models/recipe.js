@@ -1,52 +1,48 @@
 import mongoose from "mongoose";
-import Ingredient from "./ingredients.js";
-import Rating from "./rating.js";
-import Step from "./steps.js";
-import Comment from "./comment.js";
 
 const recipeSchema = new mongoose.Schema({
-    "user_id": {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    "title": {
+    title: {
         type: String,
         required: true
     },
-    "description": {
+    description: {
         type: String,
         required: true
     },
-    "image": {
-        "fileName": {
+    image: {
+        fileName: {
             type: String,
             required: true
         },
-        "imageUrl": {
+        imageUrl: {
             type: String,
             required: true
         }
     },
-    "servings": {
+    servings: {
         type: Number,
         required: true
     },
-    "cooking_time": {
+    cooking_time: {
         type: Number,
         required: true
     },
-    "category": {
+    category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category"
     },
-    "ingredients": [
+    ingredients: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Ingredient"
         }
     ],
-    "steps": [
+    steps: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Step"
@@ -55,18 +51,6 @@ const recipeSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
-
-recipeSchema.pre('remove', async function (next) {
-    try {
-        await Ingredient.deleteMany({ recipe_id: this._id });
-        await Step.deleteMany({ recipe_id: this._id });
-        await Rating.deleteMany({ recipe_id: this._id });
-        await Comment.deleteMany({ recipe_id: this._id });
-        next();
-    } catch (err) {
-        next(err);
-    }
-})
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 

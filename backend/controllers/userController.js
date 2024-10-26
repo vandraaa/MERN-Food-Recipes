@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
+import { uploadPhoto, deletePhoto } from '../utils/photo.js';
+import Recipe from '../models/recipe.js';
+import Step from '../models/steps.js';
+import Comment from '../models/comment.js';
+import Rating from '../models/rating.js';
+import Ingredient from '../models/ingredients.js';
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -82,12 +88,13 @@ export const createUser = async (req, res) => {
 export const editUser = async (req, res) => {
     const { id } = req.params;
     const { name, email, password } = req.body;
+    const file = req.file;
 
     if (!isValidObjectId(id)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
     }
 
-    if (!name && !email && !password) {
+    if (!name || !email || !password) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Please provide at least one field to update" } });
     }
 
@@ -100,6 +107,18 @@ export const editUser = async (req, res) => {
         }
 
         let updateData = { name, email };
+
+        if (file) {
+            const oldImage = await User.findById(id).select("image");
+
+            if (oldImage.image) {
+                await deletePhoto(oldImage.image.fileName);
+            }
+
+            const { fileName, imageUrl } = await uploadPhoto(file.buffer, file.originalname, file.mimetype);
+            updateData.image = { fileName, imageUrl };
+        }
+
         if (password) {
             const salt = await bcrypt.genSalt(10);
             updateData.password = await bcrypt.hash(password, salt);
@@ -130,10 +149,29 @@ export const deleteUser = async (req, res) => {
     }
 
     try {
-        const user = await User.findByIdAndDelete(id);
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "User not found" } });
         }
+
+        if(user.image?.fileName) {
+            await deletePhoto(user.image.fileName);
+        }
+
+        const recipes = await Recipe.find({ user: id });
+        for (const recipe of recipes) {
+            if(recipe.image?.fileName) {
+                await deletePhoto(recipe.image.fileName);
+            }
+
+            await Step.deleteMany({ recipe: recipe._id });
+            await Comment.deleteMany({ recipe: recipe._id });
+            await Rating.deleteMany({ recipe: recipe._id });
+            await Ingredient.deleteMany({ recipe: recipe._id });
+            await Recipe.findByIdAndDelete(recipe._id);
+        }
+
+        await User.findByIdAndDelete(id);
 
         res.status(200).json({ status: "success", message: "User deleted" });
     } catch (e) {

@@ -6,11 +6,15 @@ import { createRecipe, deleteRecipe, getRecipeByCategoryId, getRecipeById } from
 
 const router = express.Router();
 
+const upload = multer({
+    storage: multer.memoryStorage()
+})
+
 // user routes
 router.get('/users', getAllUsers);
 router.get('/users/:id', getUserById);
 router.post('/users', createUser);
-router.patch('/users/:id', editUser);
+router.patch('/users/:id', upload.single('image'), editUser);
 router.delete('/users/:id', deleteUser);
 
 // category routes
@@ -21,7 +25,7 @@ router.patch('/categories/:id', editCategory);
 router.delete('/categories/:id', deleteCategory);
 
 // recipe routes
-router.post('/recipes', multer().single('image'), createRecipe);
+router.post('/recipes', upload.single('image'), createRecipe);
 router.get('/recipes/:id', getRecipeById);
 router.get('/recipes', getRecipeByCategoryId);
 router.delete('/recipes/:id', deleteRecipe);

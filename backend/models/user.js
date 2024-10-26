@@ -5,9 +5,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    profile_picture: {
-        type: String,
-        default: null
+    image: {
+        fileName: {
+            type: String,
+        },
+        imageUrl: {
+            type: String,
+        }
     },
     email: {
         type: String,

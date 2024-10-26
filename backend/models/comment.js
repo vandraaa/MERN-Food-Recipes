@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema({
-    "recipe_id": {
+    recipe: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Recipe",
         required: true
     },
-    "user_id": {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    "comment": {
+    comment: {
         type: String,
         required: true
     }

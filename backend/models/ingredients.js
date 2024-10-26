@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
 
 const ingredientSchema = new mongoose.Schema({
-    "recipe_id": {
+    recipe: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Recipe",
         required: true
     },
-    "name": {
+    name: {
         type: String,
         required: true
     },
-    "quantity": {
+    quantity: {
         type: String,
         required: true
     }

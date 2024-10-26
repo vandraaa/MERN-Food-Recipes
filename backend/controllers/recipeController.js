@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import Recipe from "../models/recipe.js";
 import { uploadPhoto, deletePhoto } from "../utils/photo.js";
+import Step from "../models/steps.js";
+import Rating from "../models/rating.js";
+import Ingredient from "../models/ingredients.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -25,7 +28,7 @@ export const createRecipe = async (req, res) => {
         const { fileName, imageUrl } = await uploadPhoto(file.buffer, file.originalname, file.mimetype);
 
         const newRecipe = new Recipe({
-            user_id: userId,
+            user: userId,
             title,
             description,
             image: {
@@ -55,7 +58,7 @@ export const getRecipeById = async (req, res) => {
     }
 
     try {
-        const recipe = await Recipe.findById(id);
+        const recipe = await Recipe.findById(id).populate("user", "name email profile_picture").populate("category", "name");
         if (!recipe) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
         }
@@ -108,6 +111,10 @@ export const deleteRecipe = async (req, res) => {
             await deletePhoto(fileName);
         }
 
+        await Step.deleteMany({ recipe: id });
+        await Comment.deleteMany({ recipe: id });
+        await Rating.deleteMany({ recipe: id });
+        await Ingredient.deleteMany({ recipe: id });
         await Recipe.findByIdAndDelete(id);
         
         res.status(200).json({ status: "success", message: "Recipe deleted" });
