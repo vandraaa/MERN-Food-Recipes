@@ -10,7 +10,7 @@ export const getAllCategories = async (req, res) => {
         res.status(200).json({ status: "success", data: categories, message: "Categories found" });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 }
 
@@ -28,7 +28,7 @@ export const createCategory = async (req, res) => {
         res.status(201).json({ status: "success", data: newCategory, message: "Category created" });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 }
 
@@ -50,7 +50,7 @@ export const getCategoryById = async (req, res) => {
         res.status(200).json({ status: "success", data: category, message: "Category found" });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 }
 
@@ -76,7 +76,7 @@ export const editCategory = async (req, res) => {
         res.status(200).json({ status: "success", data: updatedCategory, message: "Category updated" });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 }
 
@@ -97,6 +97,6 @@ export const deleteCategory = async (req, res) => {
         res.status(200).json({ status: "success", data: deletedCategory, message: "Category deleted" });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 }

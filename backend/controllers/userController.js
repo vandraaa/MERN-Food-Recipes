@@ -15,7 +15,7 @@ export const getAllUsers = async (req, res) => {
         });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 };
 
@@ -43,7 +43,7 @@ export const getUserById = async (req, res) => {
         });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 };
 
@@ -74,7 +74,7 @@ export const createUser = async (req, res) => {
         });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 };
 
@@ -117,7 +117,7 @@ export const editUser = async (req, res) => {
         });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 };
 
@@ -138,6 +138,6 @@ export const deleteUser = async (req, res) => {
         res.status(200).json({ status: "success", message: "User deleted" });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 };

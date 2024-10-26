@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import Ingredient from "./ingredients.js";
+import Rating from "./rating.js";
+import Step from "./steps.js";
+import Comment from "./comment.js";
 
 const recipeSchema = new mongoose.Schema({
     "user_id": {
@@ -14,9 +18,15 @@ const recipeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    "image_url": {
-        type: String,
-        required: true
+    "image": {
+        "fileName": {
+            type: String,
+            required: true
+        },
+        "imageUrl": {
+            type: String,
+            required: true
+        }
     },
     "servings": {
         type: Number,
@@ -45,6 +55,18 @@ const recipeSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+recipeSchema.pre('remove', async function (next) {
+    try {
+        await Ingredient.deleteMany({ recipe_id: this._id });
+        await Step.deleteMany({ recipe_id: this._id });
+        await Rating.deleteMany({ recipe_id: this._id });
+        await Comment.deleteMany({ recipe_id: this._id });
+        next();
+    } catch (err) {
+        next(err);
+    }
+})
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
