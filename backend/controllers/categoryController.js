@@ -1,7 +1,6 @@
-import mongoose from "mongoose";
 import Category from "../models/category.js";
+import { isValidObjectId } from "../utils/utils.js";
 
-const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // GET ALL CATEGORIES
 export const getAllCategories = async (req, res) => {

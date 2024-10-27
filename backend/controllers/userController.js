@@ -1,14 +1,12 @@
-import mongoose from 'mongoose';
+import { isValidObjectId } from '../utils/utils.js';
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
-import { uploadPhoto, deletePhoto } from '../utils/photo.js';
+import { uploadPhoto, deletePhoto } from '../utils/utils.js';
 import Recipe from '../models/recipe.js';
 import Step from '../models/steps.js';
-import Comment from '../models/comment.js';
-import Rating from '../models/rating.js';
 import Ingredient from '../models/ingredients.js';
+import Feedback from '../models/feedback.js';
 
-const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // GET ALL USERS
 export const getAllUsers = async (req, res) => {
@@ -46,37 +44,6 @@ export const getUserById = async (req, res) => {
             status: "success",
             data: user,
             message: "User found"
-        });
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
-    }
-};
-
-// CREATE USER
-export const createUser = async (req, res) => {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-        return res.status(400).json({ status: "error", error: { code: 400, message: "Please provide all fields" } });
-    }
-
-    try {
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ status: "error", error: { code: 400, message: "Email already exists" } });
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const newUser = new User({ name, email, password: hashedPassword });
-
-        await newUser.save();
-        res.status(201).json({
-            status: "success",
-            message: "User created",
-            data: newUser
         });
     } catch (e) {
         console.error(e);
@@ -165,9 +132,8 @@ export const deleteUser = async (req, res) => {
             }
 
             await Step.deleteMany({ recipe: recipe._id });
-            await Comment.deleteMany({ recipe: recipe._id });
-            await Rating.deleteMany({ recipe: recipe._id });
             await Ingredient.deleteMany({ recipe: recipe._id });
+            await Feedback.deleteMany({ recipe: recipe._id });
             await Recipe.findByIdAndDelete(recipe._id);
         }
 

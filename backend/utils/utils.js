@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { createClient } from "@supabase/supabase-js";
 import dotenv from 'dotenv';
 
@@ -43,3 +44,5 @@ export const deletePhoto = async (fileName) => {
         throw new Error(`Error deleting photo: ${e.message}`);
     }
 };
+
+export const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);

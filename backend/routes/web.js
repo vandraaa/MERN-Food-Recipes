@@ -1,8 +1,9 @@
 import express from 'express';
 import multer from 'multer';
-import { createUser, deleteUser, editUser, getAllUsers, getUserById } from '../controllers/userController.js';
+import { deleteUser, editUser, getAllUsers, getUserById } from '../controllers/userController.js';
 import { createCategory, deleteCategory, editCategory, getAllCategories, getCategoryById } from '../controllers/categoryController.js';
 import { createRecipe, deleteRecipe, getRecipeByCategoryId, getRecipeById } from '../controllers/recipeController.js';
+import { loginUser, registerUser } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -10,10 +11,13 @@ const upload = multer({
     storage: multer.memoryStorage()
 })
 
+// auth routes
+router.post('/auth/register', registerUser);
+router.post('/auth/login', loginUser);
+
 // user routes
 router.get('/users', getAllUsers);
 router.get('/users/:id', getUserById);
-router.post('/users', createUser);
 router.patch('/users/:id', upload.single('image'), editUser);
 router.delete('/users/:id', deleteUser);
 

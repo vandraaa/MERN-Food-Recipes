@@ -1,24 +1,28 @@
 import mongoose from "mongoose";
 
-const commentSchema = new mongoose.Schema({
-    recipe: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Recipe",
-        required: true
-    },
+const feedbackSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
+    recipe: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Recipe",
+        required: true
+    },
     comment: {
         type: String,
+        required: true
+    },
+    rating: {
+        type: Number,
         required: true
     }
 }, {
     timestamps: true
 })
 
-const Comment = mongoose.model('Comment', commentSchema);
+const Feedback = mongoose.model('Feedback', feedbackSchema);
 
-export default Comment
+export default Feedback

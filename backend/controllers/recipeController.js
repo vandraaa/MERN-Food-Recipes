@@ -1,11 +1,9 @@
-import mongoose from "mongoose";
+import { isValidObjectId } from "../utils/utils.js";
 import Recipe from "../models/recipe.js";
-import { uploadPhoto, deletePhoto } from "../utils/photo.js";
-import Step from "../models/steps.js";
-import Rating from "../models/rating.js";
+import { uploadPhoto, deletePhoto } from "../utils/utils.js";
 import Ingredient from "../models/ingredients.js";
-
-const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+import Step from "../models/steps.js";
+import Feedback from "../models/feedback.js";
 
 // CREATE RECIPE
 export const createRecipe = async (req, res) => {
@@ -112,9 +110,8 @@ export const deleteRecipe = async (req, res) => {
         }
 
         await Step.deleteMany({ recipe: id });
-        await Comment.deleteMany({ recipe: id });
-        await Rating.deleteMany({ recipe: id });
         await Ingredient.deleteMany({ recipe: id });
+        await Feedback.deleteMany({ recipe: id });
         await Recipe.findByIdAndDelete(id);
         
         res.status(200).json({ status: "success", message: "Recipe deleted" });

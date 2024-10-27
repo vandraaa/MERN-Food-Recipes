@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 
 app.use('/api', routes);
 
-app.listen(port, () => {
-    connectDB();
+app.listen(port, async () => {
+    await connectDB();
     console.log(`Server running at http://localhost:${port}`);
 })
