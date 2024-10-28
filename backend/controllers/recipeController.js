@@ -93,6 +93,31 @@ export const getRecipeByCategoryId = async (req, res) => {
     }
 }
 
+// SEARCH RECIPES BY TITLE QUERY
+export const searchRecipesByTitle = async (req, res) => {
+    const { q } = req.query;
+
+    if (!q) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Title query parameter is required" }});
+    }
+
+    try {
+        const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }})
+                                        .limit(5)
+                                        .populate("user", "name profile_picture")
+                                        .populate("category", "name");
+
+        if (recipes.length === 0) {
+            return res.status(404).json({ status: "error", error: { code: 404, message: "No recipes found" } });
+        }
+
+        res.status(200).json({ status: "success", data: recipes, message: "Recipes found" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message }});
+    }
+}
+
 // EDIT RECIPE
 export const editRecipe = async (req, res) => {
     const { id } = req.params;
