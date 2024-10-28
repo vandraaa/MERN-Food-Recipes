@@ -2,9 +2,11 @@ import express from 'express';
 import multer from 'multer';
 import { deleteUser, editUser, getAllUsers, getUserById } from '../controllers/userController.js';
 import { createCategory, deleteCategory, editCategory, getAllCategories, getCategoryById } from '../controllers/categoryController.js';
-import { createRecipe, deleteRecipe, getRecipeByCategoryId, getRecipeById } from '../controllers/recipeController.js';
+import { createRecipe, deleteRecipe, editRecipe, getRecipeByCategoryId, getRecipeById } from '../controllers/recipeController.js';
 import { loginUser, registerUser } from '../controllers/authController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { createIngredient, deleteAllIngredientsByRecipeId, deleteIngredient, editIngredient } from '../controllers/ingredientsController.js';
+import { createFeedback, deleteFeedback, getFeedbackByRecipeId } from '../controllers/feedbackController.js';
 
 const router = express.Router();
 
@@ -31,9 +33,20 @@ router.delete('/categories/:id', authMiddleware, deleteCategory);
 
 // recipe routes
 router.post('/recipes', authMiddleware, upload.single('image'), createRecipe);
+router.patch('/recipes/:id', authMiddleware, upload.single('image'), editRecipe);
 router.get('/recipes/:id', getRecipeById);
 router.get('/recipes', getRecipeByCategoryId);
 router.delete('/recipes/:id', authMiddleware, deleteRecipe);
 
+// ingredient routes
+router.post('/recipes/ingredients/:id', authMiddleware, createIngredient);
+router.patch('/recipes/ingredients/:id', authMiddleware, editIngredient);
+router.delete('/recipes/ingredients/:id', authMiddleware, deleteIngredient);
+router.delete('/recipes/ingredients/all/:id', authMiddleware, deleteAllIngredientsByRecipeId);
+
+// feedback routes
+router.post('/recipes/feedback', authMiddleware, createFeedback);
+router.delete('/recipes/feedback/:id', authMiddleware, deleteFeedback);
+router.get('/recipes/feedback/:id', getFeedbackByRecipeId);
 
 export default router;

@@ -56,7 +56,11 @@ export const getRecipeById = async (req, res) => {
     }
 
     try {
-        const recipe = await Recipe.findById(id).populate("user", "name email profile_picture").populate("category", "name");
+        const recipe = await Recipe.findById(id)
+                                .populate("user", "name email profile_picture")
+                                .populate("category", "name")
+                                .populate("ingredients", "name quantity")
+
         if (!recipe) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
         }
@@ -83,6 +87,51 @@ export const getRecipeByCategoryId = async (req, res) => {
         }
 
         res.status(200).json({ status: "success", data: recipes, message: "Recipes found" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
+
+// EDIT RECIPE
+export const editRecipe = async (req, res) => {
+    const { id } = req.params;
+    const { title, description, servings, cookingTime, categoryId } = req.body;
+    const file = req.file;
+
+    if (!isValidObjectId(id)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid recipe ID" } });
+    }
+
+    if (!title || !description || !servings || !cookingTime || !categoryId) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Please provide all fields" } });
+    }
+
+    try {
+        const recipe = await Recipe.findById(id);
+        if (!recipe) {
+            return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
+        }
+
+        let updateData = { title, description, servings, cooking_time: cookingTime, category: categoryId };
+
+        if (file) {
+            const oldImage = await Recipe.findById(id).select("image");
+            if (oldImage.image) {
+                await deletePhoto(oldImage.image.fileName);
+            }
+
+            const { fileName, imageUrl } = await uploadPhoto(file.buffer, file.originalname, file.mimetype);
+
+            updateData.image = {
+                fileName,
+                imageUrl
+            }
+        }
+
+        const updatedRecipe = await Recipe.findByIdAndUpdate(id, updateData, { new: true });
+
+        res.status(200).json({ status: "success", data: updatedRecipe, message: "Recipe updated" });
     } catch (e) {
         console.error(e);
         res.status(500).json({ status: "error", error: { code: 500, message: e.message } });

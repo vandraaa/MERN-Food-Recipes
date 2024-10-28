@@ -137,6 +137,7 @@ export const deleteUser = async (req, res) => {
             await Recipe.findByIdAndDelete(recipe._id);
         }
 
+        await Feedback.deleteMany({ user: id });
         await User.findByIdAndDelete(id);
 
         res.status(200).json({ status: "success", message: "User deleted" });
