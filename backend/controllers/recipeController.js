@@ -7,7 +7,8 @@ import Feedback from "../models/feedback.js";
 
 // CREATE RECIPE
 export const createRecipe = async (req, res) => {
-    const { userId, title, description, servings, cookingTime, categoryId } = req.body;
+    const { title, description, servings, cookingTime, categoryId } = req.body;
+    const userId = req.user.id;
     const file = req.file;
 
     if (!isValidObjectId(userId)) { 
@@ -35,12 +36,23 @@ export const createRecipe = async (req, res) => {
             },
             servings,
             cooking_time: cookingTime,
-            category: categoryId
+            categoryId
         });
 
         const savedRecipe = await newRecipe.save();
 
-        res.status(201).json({ status: "success", data: savedRecipe, message: "Recipe created" });
+        const data = {
+            id: savedRecipe._id,
+            userId: savedRecipe.user,
+            title: savedRecipe.title,
+            description: savedRecipe.description,
+            image: savedRecipe.image,
+            servings: savedRecipe.servings,
+            cooking_time: savedRecipe.cooking_time,
+            category: savedRecipe.category
+        }
+
+        res.status(201).json({ status: "success", data, message: "Recipe created" });
     } catch (e) {
         console.error(e);
         res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
@@ -65,7 +77,20 @@ export const getRecipeById = async (req, res) => {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
         }
 
-        res.status(200).json({ status: "success", data: recipe, message: "Recipe found" });
+        const data = {
+            id: recipe._id,
+            user: recipe.user,
+            title: recipe.title,
+            description: recipe.description,
+            image: recipe.image,
+            servings: recipe.servings,
+            cooking_time: recipe.cooking_time,
+            category: recipe.category,
+            ingredients: recipe.ingredients,
+            steps: recipe.steps,
+        }
+
+        res.status(200).json({ status: "success", data, message: "Recipe found" });
     } catch (e) {
         console.error(e);
         res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
@@ -81,12 +106,23 @@ export const getRecipeByCategoryId = async (req, res) => {
     }
 
     try {
-        const recipes = await Recipe.find({ category: categoryId });
+        const recipes = await Recipe.find({ category: categoryId }).limit(5).populate("user", "name image").populate("category", "name");
         if (!recipes) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Recipes not found" } });
         }
 
-        res.status(200).json({ status: "success", data: recipes, message: "Recipes found" });
+        const data = recipes.map((recipe) => ({
+            id: recipe._id,
+            user: recipe.user,
+            title: recipe.title,
+            description: recipe.description,
+            image: recipe.image,
+            servings: recipe.servings,
+            cooking_time: recipe.cooking_time,
+            category: recipe.category
+        }));
+
+        res.status(200).json({ status: "success", data, message: "Recipes found" });
     } catch (e) {
         console.error(e);
         res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
@@ -104,14 +140,25 @@ export const searchRecipesByTitle = async (req, res) => {
     try {
         const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }})
                                         .limit(5)
-                                        .populate("user", "name profile_picture")
+                                        .populate("user", "name image")
                                         .populate("category", "name");
 
         if (recipes.length === 0) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "No recipes found" } });
         }
 
-        res.status(200).json({ status: "success", data: recipes, message: "Recipes found" });
+        const data = recipes.map((recipe) => ({
+            id: recipe._id,
+            user: recipe.user,
+            title: recipe.title,
+            description: recipe.description,
+            image: recipe.image,
+            servings: recipe.servings,
+            cooking_time: recipe.cooking_time,
+            category: recipe.category
+        }));
+
+        res.status(200).json({ status: "success", data, message: "Recipes found" });
     } catch (e) {
         console.error(e);
         res.status(500).json({ status: "error", error: { code: 500, message: e.message }});

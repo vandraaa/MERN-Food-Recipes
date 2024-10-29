@@ -53,9 +53,9 @@ export const getUserById = async (req, res) => {
 
 // EDIT USER
 export const editUser = async (req, res) => {
-    const { id } = req.params;
     const { name, email, password } = req.body;
     const file = req.file;
+    const id = req.user.id;
 
     if (!isValidObjectId(id)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });

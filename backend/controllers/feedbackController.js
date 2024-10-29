@@ -3,7 +3,8 @@ import Feedback from "../models/feedback.js";
 
 // CREATE FEEDBACK
 export const createFeedback = async (req, res) => {
-    const { userId, recipeId, rating, comment } = req.body;
+    const { recipeId, rating, comment } = req.body;
+    const userId = req.user.id;
 
     if (!isValidObjectId(userId)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
@@ -30,7 +31,16 @@ export const createFeedback = async (req, res) => {
             });
     
             await newFeedback.save();
-            res.status(201).json({ status: "success", data: newFeedback, message: "Feedback created" });
+
+            const data = {
+                id: newFeedback._id,
+                userId: newFeedback.user,
+                recipeId: newFeedback.recipe,
+                rating: newFeedback.rating,
+                comment: newFeedback.comment,
+            }
+
+            res.status(201).json({ status: "success", data, message: "Feedback created" });
         }
     } catch (e) {
         console.error(e);
@@ -52,7 +62,17 @@ export const getFeedbackByRecipeId = async (req, res) => {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Feedback not found" } });
         }
 
-        res.status(200).json({ status: "success", data: feedback, message: "Feedback found" });
+        const data = feedback.map((feedback) => {
+            return {
+                id: feedback._id,
+                userId: feedback.user,
+                recipeId: feedback.recipe,
+                rating: feedback.rating,
+                comment: feedback.comment,
+            }
+        })
+
+        res.status(200).json({ status: "success", data, message: "Feedback found" });
     } catch (e) {
         console.error(e);
         res.status(500).json({ status: "error", error: { code: 500, message: e.message } });

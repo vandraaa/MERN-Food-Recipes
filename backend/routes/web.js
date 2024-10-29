@@ -7,7 +7,7 @@ import { loginUser, registerUser } from '../controllers/authController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { createIngredient, deleteAllIngredientsByRecipeId, deleteIngredient, editIngredient } from '../controllers/ingredientsController.js';
 import { createFeedback, deleteFeedback, getFeedbackByRecipeId } from '../controllers/feedbackController.js';
-import { saveRecipe, unsaveRecipe } from '../controllers/savedRecipeController.js';
+import { getSavedRecipeByUserId, saveRecipe, unsaveRecipe } from '../controllers/savedRecipeController.js';
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.post('/auth/login', loginUser);
 // user routes
 router.get('/users', getAllUsers);
 router.get('/users/:id', authMiddleware, getUserById);
-router.patch('/users/:id', authMiddleware, upload.single('image'), editUser);
+router.patch('/users', authMiddleware, upload.single('image'), editUser);
 router.delete('/users/:id', authMiddleware, deleteUser);
 
 // category routes
@@ -52,6 +52,7 @@ router.delete('/recipes/feedback/:id', authMiddleware, deleteFeedback);
 router.get('/recipes/feedback/:id', getFeedbackByRecipeId);
 
 // saved recipes routes
+router.get('/saved-recipe', authMiddleware, getSavedRecipeByUserId);
 router.post('/save-recipe', authMiddleware, saveRecipe);
 router.delete('/unsave-recipe', authMiddleware, unsaveRecipe);
 
