@@ -72,6 +72,7 @@ export const getRecipeById = async (req, res) => {
                                 .populate("user", "name email profile_picture")
                                 .populate("category", "name")
                                 .populate("ingredients", "name quantity")
+                                .populate("steps", "step_number instruction")
 
         if (!recipe) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });

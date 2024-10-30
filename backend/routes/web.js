@@ -8,6 +8,7 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { createIngredient, deleteAllIngredientsByRecipeId, deleteIngredient, editIngredient } from '../controllers/ingredientsController.js';
 import { createFeedback, deleteFeedback, getFeedbackByRecipeId } from '../controllers/feedbackController.js';
 import { getSavedRecipeByUserId, saveRecipe, unsaveRecipe } from '../controllers/savedRecipeController.js';
+import { createStep, deleteAllStepsByRecipeId, deleteStep, updateStep } from '../controllers/stepsController.js';
 
 const router = express.Router();
 
@@ -39,6 +40,12 @@ router.get('/recipes/:id', getRecipeById);
 router.get('/recipes', getRecipeByCategoryId);
 router.get('/search/recipes', searchRecipesByTitle);
 router.delete('/recipes/:id', authMiddleware, deleteRecipe);
+
+// steps routes
+router.post('/recipe/steps/:recipeId', authMiddleware, createStep);
+router.patch('/recipe/steps/:stepId', authMiddleware, updateStep);
+router.delete('/recipe/steps/:stepId', authMiddleware, deleteStep);
+router.delete('/recipe/steps/all/:recipeId', authMiddleware, deleteAllStepsByRecipeId);
 
 // ingredient routes
 router.post('/recipes/ingredients/:id', authMiddleware, createIngredient);
