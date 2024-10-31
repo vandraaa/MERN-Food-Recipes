@@ -22,9 +22,9 @@ router.post('/auth/login', loginUser);
 
 // user routes
 router.get('/users', getAllUsers);
-router.get('/users/:id', authMiddleware, getUserById);
+router.get('/users-detail', authMiddleware, getUserById);
 router.patch('/users', authMiddleware, upload.single('image'), editUser);
-router.delete('/users/:id', authMiddleware, deleteUser);
+router.delete('/users', authMiddleware, deleteUser);
 
 // category routes
 router.get('/categories', getAllCategories);

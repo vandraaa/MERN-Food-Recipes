@@ -25,7 +25,7 @@ export const getAllUsers = async (req, res) => {
 
 // GET USER BY ID
 export const getUserById = async (req, res) => {
-    const { id } = req.params;
+    const id = req.user.id;
 
     if (!isValidObjectId(id)) {
         return res.status(400).json({
@@ -109,7 +109,7 @@ export const editUser = async (req, res) => {
 
 // DELETE USER
 export const deleteUser = async (req, res) => {
-    const { id } = req.params;
+    const id = req.user.id;
 
     if (!isValidObjectId(id)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
