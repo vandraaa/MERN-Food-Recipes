@@ -68,7 +68,7 @@ export const getRecipeById = async (req, res) => {
     }
 
     try {
-        const recipe = await Recipe.findById(id)
+        const recipe = await Recipe.findOne({ _id: id })
                                 .populate("user", "name email profile_picture")
                                 .populate("category", "name")
                                 .populate("ingredients", "name quantity")
@@ -107,7 +107,7 @@ export const getRecipeByCategoryId = async (req, res) => {
     }
 
     try {
-        const recipes = await Recipe.find({ category: categoryId }).limit(5).populate("user", "name image").populate("category", "name");
+        const recipes = await Recipe.find({ category: categoryId, isApproved: true }).limit(5).populate("user", "name image").populate("category", "name");
         if (!recipes) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Recipes not found" } });
         }
@@ -139,7 +139,7 @@ export const searchRecipesByTitle = async (req, res) => {
     }
 
     try {
-        const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }})
+        const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }, isApproved: true })
                                         .limit(5)
                                         .populate("user", "name image")
                                         .populate("category", "name");
@@ -237,6 +237,38 @@ export const deleteRecipe = async (req, res) => {
         await Recipe.findByIdAndDelete(id);
         
         res.status(200).json({ status: "success", message: "Recipe deleted" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
+
+// APPROVE RECIPE
+export const approveRecipe = async (req, res) => {
+    const id = req.user.id;
+    const { recipeId } = req.params;
+
+    if (!isValidObjectId(id)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
+    }
+
+    if (!isValidObjectId(recipeId)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid recipe ID" } });
+    }
+
+    try {
+        const isAdmin = await User.findOne({ user: id, role: "admin" });
+        if (!isAdmin) {
+            return res.status(401).json({ status: "error", error: { code: 401, message: "Unauthorized" } });
+        } else {
+            const recipe = await Recipe.findById(recipeId);
+            if (!recipe) {
+                return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
+            }
+            recipe.isApproved = true;
+            await recipe.save();
+            res.status(200).json({ status: "success", message: "Recipe approved" });
+        }
     } catch (e) {
         console.error(e);
         res.status(500).json({ status: "error", error: { code: 500, message: e.message } });

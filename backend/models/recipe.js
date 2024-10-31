@@ -36,6 +36,10 @@ const recipeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category"
     },
+    isApproved: {
+        type: Boolean,
+        default: false
+    },
     ingredients: [
         {
             type: mongoose.Schema.Types.ObjectId,
