@@ -4,6 +4,7 @@ import { uploadPhoto, deletePhoto } from "../utils/utils.js";
 import Ingredient from "../models/ingredients.js";
 import Step from "../models/steps.js";
 import Feedback from "../models/feedback.js";
+import User from "../models/user.js";
 
 // CREATE RECIPE
 export const createRecipe = async (req, res) => {
@@ -246,7 +247,7 @@ export const deleteRecipe = async (req, res) => {
 // APPROVE RECIPE
 export const approveRecipe = async (req, res) => {
     const id = req.user.id;
-    const { recipeId } = req.params;
+    const { recipeId } = req.body;
 
     if (!isValidObjectId(id)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
@@ -257,10 +258,8 @@ export const approveRecipe = async (req, res) => {
     }
 
     try {
-        const isAdmin = await User.findOne({ user: id, role: "admin" });
-        if (!isAdmin) {
-            return res.status(401).json({ status: "error", error: { code: 401, message: "Unauthorized" } });
-        } else {
+        const isAdmin = await User.findOne({ _id: id });
+        if (isAdmin.role === "admin") {
             const recipe = await Recipe.findById(recipeId);
             if (!recipe) {
                 return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
@@ -268,6 +267,8 @@ export const approveRecipe = async (req, res) => {
             recipe.isApproved = true;
             await recipe.save();
             res.status(200).json({ status: "success", message: "Recipe approved" });
+        } else {
+            return res.status(401).json({ status: "error", error: { code: 401, message: "Access denied" } });
         }
     } catch (e) {
         console.error(e);
