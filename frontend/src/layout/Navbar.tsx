@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Container from "../components/Container";
+import Container from "../components/container/Container";
 
 export default function Navbar() {
   return (

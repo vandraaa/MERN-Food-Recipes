@@ -1,4 +1,4 @@
-import Container from "../../components/Container";
+import Container from "../../components/container/Container";
 import Navbar from "../../layout/Navbar";
 
 export default function HomePage() {
