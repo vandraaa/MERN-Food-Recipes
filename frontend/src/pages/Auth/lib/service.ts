@@ -62,3 +62,25 @@ export const saveToken = (token: string, storageType: "local" | "session" = "loc
 export const getToken = () => {
     return localStorage.getItem("authToken");
 }
+
+export const getUserData = async () => {
+    try {
+        const url = `${baseUrl}/users-detail`;
+        const headers = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Authorization": `Bearer ${getToken()}`
+        }
+
+        const res = await axios.get(url, { headers });
+
+        return res.data;
+    } catch (error: AxiosError | any) {
+        if (error.response) {
+            return error.response.data;
+        } else {
+            console.log("Unexpected error:", error);
+            throw new Error("An unexpected error occurred");
+        }
+    }
+}

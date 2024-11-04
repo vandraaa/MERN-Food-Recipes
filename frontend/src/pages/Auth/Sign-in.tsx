@@ -4,6 +4,8 @@ import InputWithLabel from "../../components/form/inputWithLabel";
 import Button from "../../components/form/button";
 import { saveToken, signInUser } from "./lib/service";
 import { Link, useNavigate } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -28,13 +30,13 @@ export default function SignIn() {
       
       if (response?.status === 200) {
         saveToken(response.data.data.token, "local");
+        toast.success("Login successfuly!");
         navigate("/");
       } else {
-        alert(response?.error.message); 
+        toast.error(response?.error.message || "Login failed, please try again."); 
       }
     } catch (err) {
-      console.error(err);
-      alert('Something went wrong');
+      toast.error("Something went wrong, try again later.");
     } finally {
       setLoading(false);
     }
@@ -43,6 +45,8 @@ export default function SignIn() {
   return (
     <div className="w-full min-h-screen bg-slate-200 flex justify-center items-center">
       <Container>
+        <ToastContainer position="top-right" autoClose={3000} />
+        
         <div className="w-[100%] sm:w-[80%] xl:w-[60%] mx-auto bg-white px-4 py-12 rounded-2xl shadow-2xl">
           <div className="flex flex-col items-center">
             <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-gray-600">
