@@ -1,4 +1,3 @@
-import { ToastContainer } from "react-toastify";
 import Container from "../../components/container/Container";
 import Navbar from "../../layout/Navbar";
 
@@ -8,7 +7,6 @@ export default function HomePage() {
         <Navbar />
 
       <Container>
-        <ToastContainer position="top-right" autoClose={3000} />
         {/* <div className="pt-20"></div> */}
       </Container>
     </div>

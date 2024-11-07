@@ -1,18 +1,21 @@
-import { ReactElement } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 interface ProtectedRouteProps {
-  element: ReactElement;
+  element: JSX.Element;
   isAllowed: boolean;
-  redirectTo?: string;
+  redirectTo: string;
 }
 
-const ProtectedRoute = ({
-  element,
-  isAllowed,
-  redirectTo = "/sign-in",
-}: ProtectedRouteProps) => {
-  return isAllowed ? element : <Navigate to={redirectTo} />;
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, isAllowed, redirectTo }) => {
+  const { isAuthenticated } = useAuth(); 
+
+  if (isAllowed && !isAuthenticated) {
+    return <Navigate to={redirectTo} />;
+  }
+
+  return element;
 };
 
 export default ProtectedRoute;

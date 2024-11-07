@@ -1,8 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import Container from "../components/container/Container";
 import { getToken } from "../pages/Auth/lib/service";
+import { MdLogout, MdSpaceDashboard } from "react-icons/md";
+import { IoPersonCircleSharp } from "react-icons/io5";
+import { showSuccessToast } from "../components/toast/toast";
+import { useAuth } from "../context/AuthContext";
 
 interface User {
   name: string;
@@ -13,8 +17,8 @@ interface User {
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
+  const { logoutContext } = useAuth();
 
   useEffect(() => {
     const token = getToken();
@@ -29,10 +33,10 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    logoutContext();
     setUser(null);
     setMenuOpen(false);
-    navigate("/sign-in");
+    showSuccessToast("Logout successfuly");
   };
 
   useEffect(() => {
@@ -70,7 +74,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Profil atau Tombol Sign In */}
           <div className="relative" ref={menuRef}>
             {user ? (
               <div
@@ -123,13 +126,15 @@ export default function Navbar() {
             )}
 
             {menuOpen && user && (
-              <div className="absolute right-0 mt-2 w-28 md:w-40 bg-white rounded-lg shadow-lg py-2">
+              <div className="absolute right-0 mt-2 w-32 md:w-40 bg-white rounded-lg shadow-lg py-2">
                 <Link
                   to="/profile"
                   className="block text-xs sm:text-sm px-4 py-2 text-gray-700 hover:bg-gray-100"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Profile
+                  <div className="flex items-center gap-x-2">
+                    <IoPersonCircleSharp /> Profile
+                  </div>
                 </Link>
                 {user.role !== "user" && (
                   <Link
@@ -137,14 +142,18 @@ export default function Navbar() {
                     className="block text-xs sm:text-sm px-4 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Dashboard
+                    <div className="flex items-center gap-x-2">
+                      <MdSpaceDashboard /> Dashboard
+                    </div>
                   </Link>
                 )}
                 <button
                   onClick={handleLogout}
                   className="block text-xs sm:text-sm w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                 >
-                  Logout
+                  <div className="flex items-center gap-x-2">
+                    <MdLogout /> Logout
+                  </div>
                 </button>
               </div>
             )}

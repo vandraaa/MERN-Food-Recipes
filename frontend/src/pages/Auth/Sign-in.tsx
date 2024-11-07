@@ -2,10 +2,11 @@ import { useState } from "react";
 import Container from "../../components/container/Container";
 import InputWithLabel from "../../components/form/inputWithLabel";
 import Button from "../../components/form/button";
-import { saveToken, signInUser } from "./lib/service";
+import { signInUser } from "./lib/service";
 import { Link, useNavigate } from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from "react-toastify";
+import { showErrorToast } from "../../components/toast/toast";
+import { useToast } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ export default function SignIn() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const { toastSuccess } = useToast();
+  const { loginContext } = useAuth()
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,14 +32,14 @@ export default function SignIn() {
       const response = await signInUser(formData.email, formData.password);
       
       if (response?.status === 200) {
-        saveToken(response.data.data.token, "local");
-        toast.success("Login successfuly!");
+        loginContext(response.data.data.token);
         navigate("/");
+        toastSuccess("Login successful!");
       } else {
-        toast.error(response?.error.message || "Login failed, please try again."); 
+        showErrorToast(response?.error.message);
       }
     } catch (err) {
-      toast.error("Something went wrong, try again later.");
+      showErrorToast("Something went wrong, try again later.");
     } finally {
       setLoading(false);
     }
@@ -44,9 +47,7 @@ export default function SignIn() {
 
   return (
     <div className="w-full min-h-screen bg-slate-200 flex justify-center items-center">
-      <Container>
-        <ToastContainer position="top-right" autoClose={3000} />
-        
+      <Container>        
         <div className="w-[100%] sm:w-[80%] xl:w-[60%] mx-auto bg-white px-4 py-12 rounded-2xl shadow-2xl">
           <div className="flex flex-col items-center">
             <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-gray-600">

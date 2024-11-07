@@ -3,6 +3,7 @@ import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { getToken } from "../../pages/Auth/lib/service";
 import ProtectedRoute from "../protected/ProtectedRoute";
+import ProfilePage from "../../pages/Profile/Profile";
 
 const HomePage = lazy(() => import("../../pages/Home/Home"));
 const SignIn = lazy(() => import("../../pages/Auth/Sign-in"));
@@ -15,13 +16,11 @@ const isLoggedIn = () => {
 
   try {
     const decoded = jwtDecode(token);
-    if (decoded) {
-      return true;
-    }
+    return Boolean(decoded);
   } catch {
     return false;
   }
-}
+};
 
 const routes: RouteObject[] = [
   {
@@ -45,6 +44,16 @@ const routes: RouteObject[] = [
       <ProtectedRoute
         element={<SignUp />}
         isAllowed={!isLoggedIn()}
+        redirectTo="/"
+      />
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <ProtectedRoute
+        element={<ProfilePage />}
+        isAllowed={isLoggedIn()}
         redirectTo="/"
       />
     ),
