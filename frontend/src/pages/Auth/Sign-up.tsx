@@ -5,6 +5,7 @@ import Button from "../../components/form/button";
 import { signUpUser } from "./lib/service";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
+import { signUpSchema } from "./validation/validationSchema";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toastSuccess, toastError } = useToast();
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,9 +24,27 @@ export default function SignUp() {
       ...prevData,
       [name]: value,
     }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
   };
 
   const register = async () => {
+    const validation = signUpSchema.safeParse(formData);
+
+    if (!validation.success) {
+      const newErrors: { [key: string]: string[] } = { name: [], email: [], password: [] };
+      validation.error.errors.forEach((error) => {
+        if (!newErrors[error.path[0]].length) {
+          newErrors[error.path[0]].push(error.message);
+        }
+      })
+      setErrors(newErrors);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await signUpUser(formData.name, formData.email, formData.password);
@@ -59,6 +79,7 @@ export default function SignUp() {
                 value={formData.name}
                 name="name"
                 onChange={handleChange}
+                error={errors.name}
               />
               <InputWithLabel
                 labelText="Email"
@@ -67,6 +88,7 @@ export default function SignUp() {
                 value={formData.email}
                 name="email"
                 onChange={handleChange}
+                error={errors.email}
               />
               <InputWithLabel
                 labelText="Password"
@@ -75,6 +97,7 @@ export default function SignUp() {
                 value={formData.password}
                 name="password"
                 onChange={handleChange}
+                error={errors.password}
               />
               <div className="pt-4">
                 <Button onClick={register}>

@@ -3,12 +3,12 @@ import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { getToken } from "../../pages/Auth/lib/service";
 import ProtectedRoute from "../protected/ProtectedRoute";
-import ProfilePage from "../../pages/Profile/Profile";
 
 const HomePage = lazy(() => import("../../pages/Home/Home"));
 const SignIn = lazy(() => import("../../pages/Auth/Sign-in"));
 const SignUp = lazy(() => import("../../pages/Auth/Sign-up"));
 const PageNotFound = lazy(() => import("../../pages/Error/404"));
+const ProfilePage = lazy(() => import("../../pages/Profile/Profile"));
 
 const isLoggedIn = () => {
   const token = getToken();
@@ -16,7 +16,8 @@ const isLoggedIn = () => {
 
   try {
     const decoded = jwtDecode(token);
-    return Boolean(decoded);
+    const isTokenExpired = new Date((decoded.exp ?? 0) * 1000) < new Date();
+    return !isTokenExpired;
   } catch {
     return false;
   }
@@ -34,7 +35,7 @@ const routes: RouteObject[] = [
       <ProtectedRoute
         element={<SignIn />}
         isAllowed={!isLoggedIn()}
-        redirectTo="/"
+        redirectTo="/profile"
       />
     ),
   },
@@ -44,7 +45,7 @@ const routes: RouteObject[] = [
       <ProtectedRoute
         element={<SignUp />}
         isAllowed={!isLoggedIn()}
-        redirectTo="/"
+        redirectTo="/profile"
       />
     ),
   },
@@ -54,7 +55,7 @@ const routes: RouteObject[] = [
       <ProtectedRoute
         element={<ProfilePage />}
         isAllowed={isLoggedIn()}
-        redirectTo="/"
+        redirectTo="/sign-in"
       />
     ),
   },
