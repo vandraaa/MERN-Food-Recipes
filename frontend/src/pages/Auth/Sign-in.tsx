@@ -4,7 +4,6 @@ import InputWithLabel from "../../components/form/inputWithLabel";
 import Button from "../../components/form/button";
 import { signInUser } from "./lib/service";
 import { Link, useNavigate } from "react-router-dom";
-import { showErrorToast } from "../../components/toast/toast";
 import { useToast } from "../../context/ToastContext";
 import { useAuth } from "../../context/AuthContext";
 
@@ -14,7 +13,7 @@ export default function SignIn() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
-  const { toastSuccess } = useToast();
+  const { toastSuccess, toastError } = useToast();
   const { loginContext } = useAuth()
   const navigate = useNavigate();
 
@@ -36,10 +35,10 @@ export default function SignIn() {
         navigate("/");
         toastSuccess("Login successful!");
       } else {
-        showErrorToast(response?.error.message);
+        toastError(response?.error.message);
       }
     } catch (err) {
-      showErrorToast("Something went wrong, try again later.");
+      toastError("Something went wrong, try again later.");
     } finally {
       setLoading(false);
     }

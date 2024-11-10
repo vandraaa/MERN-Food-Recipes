@@ -4,7 +4,6 @@ import InputWithLabel from "../../components/form/inputWithLabel";
 import Button from "../../components/form/button";
 import { signUpUser } from "./lib/service";
 import { Link, useNavigate } from "react-router-dom";
-import { showErrorToast } from "../../components/toast/toast";
 import { useToast } from "../../context/ToastContext";
 
 export default function SignUp() {
@@ -15,7 +14,7 @@ export default function SignUp() {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toastSuccess } = useToast();
+  const { toastSuccess, toastError } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,10 +34,10 @@ export default function SignUp() {
         navigate("/sign-in");
         toastSuccess("Registration successful!");
       } else {
-        showErrorToast(response?.error.message);
+        toastError(response?.error.message);
       }
     } catch (err) {
-      showErrorToast("Something went wrong, try again later.");
+      toastError("Something went wrong, try again later.");
     } finally {
       setLoading(false);
     }

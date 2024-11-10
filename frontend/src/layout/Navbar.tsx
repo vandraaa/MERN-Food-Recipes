@@ -5,8 +5,9 @@ import Container from "../components/container/Container";
 import { getToken } from "../pages/Auth/lib/service";
 import { MdLogout, MdSpaceDashboard } from "react-icons/md";
 import { IoPersonCircleSharp } from "react-icons/io5";
-import { showSuccessToast } from "../components/toast/toast";
 import { useAuth } from "../context/AuthContext";
+import Swal from "sweetalert2";
+import { useToast } from "../context/ToastContext";
 
 interface User {
   name: string;
@@ -19,6 +20,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { logoutContext } = useAuth();
+  const { toastSuccess } = useToast();
 
   useEffect(() => {
     const token = getToken();
@@ -33,10 +35,22 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    logoutContext();
-    setUser(null);
-    setMenuOpen(false);
-    showSuccessToast("Logout successfuly");
+    Swal.fire({
+      title: "Are you sure you want to logout?",
+      text: "You will be logged out.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, logout",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logoutContext();
+        setUser(null);
+        setMenuOpen(false);
+        toastSuccess("Logout successfuly");    
+      }
+    })
   };
 
   useEffect(() => {
