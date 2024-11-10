@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { deleteUser, editUser, getAllUsers, getUserById } from '../controllers/userController.js';
+import { changePassword, changePhoto, deleteUser, editUser, getAllUsers, getUserById } from '../controllers/userController.js';
 import { createCategory, deleteCategory, editCategory, getAllCategories, getCategoryById } from '../controllers/categoryController.js';
 import { approveRecipe, createRecipe, deleteRecipe, editRecipe, getRecipeByCategoryId, getRecipeById, searchRecipesByTitle } from '../controllers/recipeController.js';
 import { loginUser, registerUser } from '../controllers/authController.js';
@@ -23,7 +23,9 @@ router.post('/auth/login', loginUser);
 // user routes
 router.get('/users', getAllUsers);
 router.get('/users-detail', authMiddleware, getUserById);
-router.patch('/users', authMiddleware, upload.single('image'), editUser);
+router.patch('/users', authMiddleware, editUser);
+router.patch('/changes-photo', authMiddleware, upload.single('image'), changePhoto);
+router.patch('/changes-password', authMiddleware, changePassword);
 router.delete('/users', authMiddleware, deleteUser);
 
 // category routes

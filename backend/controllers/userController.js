@@ -54,7 +54,6 @@ export const getUserById = async (req, res) => {
 // EDIT USER
 export const editUser = async (req, res) => {
     const { name, email, password } = req.body;
-    const file = req.file;
     const id = req.user.id;
 
     if (!isValidObjectId(id)) {
@@ -66,6 +65,11 @@ export const editUser = async (req, res) => {
     }
 
     try {
+        const validPassword = await User.findById(id).select("password").comparePassword(password);
+        if (!validPassword) {
+            return res.status(401).json({ status: "error", error: { code: 401, message: "Invalid password" } });
+        }
+
         if (email) {
             const existingUser = await User.findOne({ email });
             if (existingUser && existingUser._id.toString() !== id) {
@@ -74,22 +78,6 @@ export const editUser = async (req, res) => {
         }
 
         let updateData = { name, email };
-
-        if (file) {
-            const oldImage = await User.findById(id).select("image");
-
-            if (oldImage.image) {
-                await deletePhoto(oldImage.image.fileName);
-            }
-
-            const { fileName, imageUrl } = await uploadPhoto(file.buffer, file.originalname, file.mimetype);
-            updateData.image = { fileName, imageUrl };
-        }
-
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            updateData.password = await bcrypt.hash(password, salt);
-        }
 
         const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
         if (!updatedUser) {
@@ -106,6 +94,75 @@ export const editUser = async (req, res) => {
         res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 };
+
+export const changePhoto = async (req, res) => {
+    const file = req.file;
+    const id = req.user.id;
+
+    if (!isValidObjectId(id)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
+    }
+
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ status: "error", error: { code: 404, message: "User not found" } });
+        }
+
+        const oldImage = await User.findById(id).select("image");
+
+        if (oldImage.image) {
+            await deletePhoto(oldImage.image.fileName);
+        }
+
+        const { fileName, imageUrl } = await uploadPhoto(file.buffer, file.originalname, file.mimetype);
+
+        const updatedUser = await User.findByIdAndUpdate(id, { image: { fileName, imageUrl } }, { new: true });
+
+        res.status(200).json({
+            status: "success",
+            message: "User updated",
+            data: updatedUser
+        })
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
+
+// CHANGE PASSWORD
+export const changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const id = req.user.id;
+
+    if (!isValidObjectId(id)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
+    }
+
+    try {
+        const validPassword = await User.findById(id).select("password").comparePassword(oldPassword);
+        if (!validPassword) {
+            return res.status(401).json({ status: "error", error: { code: 401, message: "Invalid password" } });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        const updatedUser = await User.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ status: "error", error: { code: 404, message: "User not found" } });
+        }
+
+        res.status(200).json({
+            status: "success",
+            message: "Password changed",
+            data: updatedUser
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
 
 // DELETE USER
 export const deleteUser = async (req, res) => {
