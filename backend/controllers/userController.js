@@ -140,29 +140,32 @@ export const changePassword = async (req, res) => {
     }
 
     try {
-        const validPassword = await User.findById(id).select("password").comparePassword(oldPassword);
-        if (!validPassword) {
+        const user = await User.findById(id).select("password");
+        if (!user) {
+            return res.status(404).json({ status: "error", error: { code: 404, message: "User not found" } });
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
             return res.status(401).json({ status: "error", error: { code: 401, message: "Invalid password" } });
         }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        const updatedUser = await User.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
-        if (!updatedUser) {
-            return res.status(404).json({ status: "error", error: { code: 404, message: "User not found" } });
-        }
+        user.password = hashedPassword;
+        await user.save();
 
         res.status(200).json({
             status: "success",
-            message: "Password changed",
-            data: updatedUser
+            message: "Password changed successfully"
         });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+        res.status(500).json({ status: "error", error: { code: 500, message: "Server error" } });
     }
-}
+};
+
 
 // DELETE USER
 export const deleteUser = async (req, res) => {
