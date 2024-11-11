@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import Container from "../components/container/Container";
-import { getToken } from "../pages/Auth/lib/service";
+import { getToken } from "../pages/Auth/lib/action";
 import { MdLogout, MdSpaceDashboard } from "react-icons/md";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { useAuth } from "../context/AuthContext";

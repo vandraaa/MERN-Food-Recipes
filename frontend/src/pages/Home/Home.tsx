@@ -3,7 +3,7 @@ import Navbar from "../../layout/Navbar";
 
 export default function HomePage() {
   return (
-    <div className="h-[200vh] bg-slate-200">
+    <div className="h-[200vh] bg-slate-100">
         <Navbar />
 
       <Container>

@@ -2,11 +2,11 @@ import { useState } from "react";
 import Container from "../../components/container/Container";
 import InputWithLabel from "../../components/form/inputWithLabel";
 import Button from "../../components/form/button";
-import { signInUser } from "./lib/service";
+import { signInUser } from "./lib/action";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
 import { useAuth } from "../../context/AuthContext";
-import { signInSchema } from "./validation/validationSchema";
+import { signInSchema } from "./lib/validation";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -52,7 +52,7 @@ export default function SignIn() {
 
       if (response?.status === 200) {
         loginContext(response.data.data.token);
-        navigate("/");
+        navigate('/')
         toastSuccess("Login successful!");
       } else {
         toastError(response?.error.message);
@@ -65,7 +65,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-200 flex justify-center items-center">
+    <div className="w-full min-h-screen bg-slate-100 flex justify-center items-center">
       <Container>
         <div className="w-[100%] sm:w-[80%] xl:w-[60%] mx-auto bg-white px-4 py-12 rounded-2xl shadow-2xl">
           <div className="flex flex-col items-center">

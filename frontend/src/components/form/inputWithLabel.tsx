@@ -7,7 +7,7 @@ interface InputWithLabelProps {
   placeholder: string;
   value: string;
   name: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
 }
 

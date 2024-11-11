@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { getToken, saveToken } from '../pages/Auth/lib/service';
+import { getToken, saveToken } from '../pages/Auth/lib/action';
 import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {

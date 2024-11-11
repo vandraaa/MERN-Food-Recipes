@@ -2,10 +2,10 @@ import { useState } from "react";
 import Container from "../../components/container/Container";
 import InputWithLabel from "../../components/form/inputWithLabel";
 import Button from "../../components/form/button";
-import { signUpUser } from "./lib/service";
+import { signUpUser } from "./lib/action";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
-import { signUpSchema } from "./validation/validationSchema";
+import { signUpSchema } from "./lib/validation";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -64,7 +64,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-200 flex justify-center items-center">
+    <div className="w-full min-h-screen bg-slate-100 flex justify-center items-center">
       <Container>        
         <div className="w-[100%] sm:w-[80%] xl:w-[60%] mx-auto bg-white px-4 py-12 rounded-2xl shadow-2xl">
           <div className="flex flex-col items-center">

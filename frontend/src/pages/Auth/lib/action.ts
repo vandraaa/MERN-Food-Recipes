@@ -74,7 +74,7 @@ export const getUserData = async () => {
 
         const res = await axios.get(url, { headers });
 
-        return res.data;
+        return res.data.data;
     } catch (error: AxiosError | any) {
         if (error.response) {
             return error.response.data;
