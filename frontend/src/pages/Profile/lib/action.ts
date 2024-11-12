@@ -30,13 +30,12 @@ export const updatePhotoProfileUser = async (file: File) => {
   }
 };
 
-export const updateUserData = async (name: string, email: string, password: string) => {
+export const updateUserData = async (name: string, email: string) => {
     try {
         const url = `${baseUrl}/users`;
         const body = {
             name,
             email,
-            password
         }
         const headers = {
             "Content-Type": "application/json",
@@ -46,7 +45,7 @@ export const updateUserData = async (name: string, email: string, password: stri
 
         const res = await axios.patch(url, body, { headers });
 
-        return res;
+        return res.data;
     } catch (error: AxiosError | any) {
         if (error.response) {
             return error.response.data;
