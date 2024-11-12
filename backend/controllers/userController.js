@@ -53,23 +53,18 @@ export const getUserById = async (req, res) => {
 
 // EDIT USER
 export const editUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email } = req.body;
     const id = req.user.id;
 
     if (!isValidObjectId(id)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
     }
 
-    if (!name || !email || !password) {
+    if (!name || !email) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Please provide at least one field to update" } });
     }
 
     try {
-        const validPassword = await User.findById(id).select("password").comparePassword(password);
-        if (!validPassword) {
-            return res.status(401).json({ status: "error", error: { code: 401, message: "Invalid password" } });
-        }
-
         if (email) {
             const existingUser = await User.findOne({ email });
             if (existingUser && existingUser._id.toString() !== id) {
