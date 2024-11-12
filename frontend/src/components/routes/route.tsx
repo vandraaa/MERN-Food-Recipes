@@ -1,16 +1,16 @@
-import { lazy } from "react";
 import ProtectedRoute from "../protected/ProtectedRoute";
 import { useAuth } from "../../context/AuthContext";
 import { useRoutes } from "react-router-dom";
 
-const HomePage = lazy(() => import("../../pages/Home/Home"));
-const SignIn = lazy(() => import("../../pages/Auth/Sign-in"));
-const SignUp = lazy(() => import("../../pages/Auth/Sign-up"));
-const PageNotFound = lazy(() => import("../../pages/Error/404"));
-const ProfilePage = lazy(() => import("../../pages/Profile/Profile"));
+import HomePage from "../../pages/Home/Home";
+import SignIn from "../../pages/Auth/Sign-in";
+import SignUp from "../../pages/Auth/Sign-up";
+import PageNotFound from "../../pages/Error/404";
+import ProfilePage from "../../pages/Profile/Profile";
+import DashboardPage from "../../pages/Dashboard/Dashboard";
 
 const RoutesProvider = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, role } = useAuth();
 
   const routes = [
     {
@@ -45,6 +45,16 @@ const RoutesProvider = () => {
           element={<ProfilePage />}
           isAllowed={isAuthenticated}
           redirectTo="/sign-in"
+        />
+      ),
+    },
+    {
+      path: "/dashboard",
+      element: (
+        <ProtectedRoute
+          element={<DashboardPage />}
+          isAllowed={isAuthenticated && (role === "author" || role === "admin")}
+          redirectTo="/"
         />
       ),
     },

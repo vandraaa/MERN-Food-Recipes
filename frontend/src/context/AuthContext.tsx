@@ -1,12 +1,16 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { getToken, saveToken } from '../pages/Auth/lib/action';
-import { jwtDecode } from "jwt-decode";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: any;
   loginContext: (token: string) => void;
   logoutContext: () => void;
+  role: string | null;
+  isLoading: boolean;
+  setRole: (role: string) => void;
+  setUser: (user: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,22 +26,32 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  interface DecodedToken extends JwtPayload {
+    role: string;
+  }
 
   const checkAuth = () => {
     const token = getToken();
     if (token) {
       try {
-        const decoded = jwtDecode(token);
+        const decoded: DecodedToken = jwtDecode(token);
         setUser(decoded);
+        setRole(decoded.role);
         setIsAuthenticated(true);
       } catch (err) {
         setIsAuthenticated(false);
         setUser(null);
+        setRole(null);
       }
     } else {
       setIsAuthenticated(false);
       setUser(null);
+      setRole(null);
     }
+    setIsLoading(false);
   };
 
   const loginContext = (token: string) => {
@@ -49,6 +63,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem("authToken");
     setIsAuthenticated(false);
     setUser(null);
+    setRole(null);
   };
 
   useEffect(() => {
@@ -56,7 +71,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, loginContext, logoutContext }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, loginContext, logoutContext, role, isLoading, setRole, setUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,34 +1,17 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { jwtDecode } from "jwt-decode";
 import Container from "../components/container/Container";
-import { getToken } from "../pages/Auth/lib/action";
 import { MdLogout, MdSpaceDashboard } from "react-icons/md";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
 import { useToast } from "../context/ToastContext";
 
-interface User {
-  name: string;
-  role: string;
-  profileImage: string;
-}
-
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { logoutContext } = useAuth();
+  const { logoutContext, role, user, setUser } = useAuth();
   const { toastSuccess } = useToast();
-
-  useEffect(() => {
-    const token = getToken();
-    if (token) {
-      const decoded: User = jwtDecode(token);
-      setUser(decoded);
-    }
-  }, []);
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
@@ -46,7 +29,7 @@ export default function Navbar() {
     }).then((result) => {
       if (result.isConfirmed) {
         logoutContext();
-        setUser(null);
+        setUser("");
         setMenuOpen(false);
         toastSuccess("Logout successfuly");    
       }
@@ -150,7 +133,7 @@ export default function Navbar() {
                     <IoPersonCircleSharp /> Profile
                   </div>
                 </Link>
-                {user.role !== "user" && (
+                {role !== "user" && (
                   <Link
                     to="/dashboard"
                     className="block text-xs sm:text-sm px-4 py-2 text-gray-700 hover:bg-gray-100"
