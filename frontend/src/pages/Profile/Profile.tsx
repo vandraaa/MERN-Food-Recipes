@@ -53,7 +53,7 @@ export default function ProfilePage() {
         <div className="relative text-center">
           <PhotoProfile userData={userData} setUserData={setUserData} />
           <h2 className="text-xl font-semibold">{userData?.name}</h2>
-          <p className="text-gray-500">{userData?.role && userData.role.toUpperCase()}</p>
+          <p className="text-gray-500 font-medium text-sm">{userData?.role !== "user" && userData?.role.toUpperCase()}</p>
         </div>
         <MenuProfile activeTab={activeTab} setActiveTab={setActiveTab} setUserData={setUserData} />
       </aside>

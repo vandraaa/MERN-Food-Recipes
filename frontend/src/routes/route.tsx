@@ -1,13 +1,13 @@
-import ProtectedRoute from "../protected/ProtectedRoute";
-import { useAuth } from "../../context/AuthContext";
+import ProtectedRoute from "../components/protected/ProtectedRoute";
+import { useAuth } from "../context/AuthContext";
 import { useRoutes } from "react-router-dom";
 
-import HomePage from "../../pages/Home/Home";
-import SignIn from "../../pages/Auth/Sign-in";
-import SignUp from "../../pages/Auth/Sign-up";
-import PageNotFound from "../../pages/Error/404";
-import ProfilePage from "../../pages/Profile/Profile";
-import DashboardPage from "../../pages/Dashboard/Dashboard";
+import HomePage from "../pages/Home/Home";
+import SignIn from "../pages/Auth/Sign-in";
+import SignUp from "../pages/Auth/Sign-up";
+import PageNotFound from "../pages/Error/404";
+import ProfilePage from "../pages/Profile/Profile";
+import DashboardPage from "../pages/Dashboard/DashboardPage";
 
 const RoutesProvider = () => {
   const { isAuthenticated, role } = useAuth();

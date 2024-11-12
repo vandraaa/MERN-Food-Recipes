@@ -72,7 +72,7 @@ export default function ChangePasswordUser({ formData, setFormData, handleChange
 
   return (
     <div className="max-w-lg p-5">
-      <h3 className="text-2xl font-semibold mb-6">Change Password</h3>
+      <h3 className="text-lg sm:text-2xl font-semibold mb-6">Change Password</h3>
       <div className="space-y-4">
         <div>
           <InputWithLabel

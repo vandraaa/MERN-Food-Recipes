@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-export const baseUrl = 'http://localhost:5000/api';
+export const baseUrl = import.meta.env.VITE_API_URL;
 
 export const signInUser = async (email: string, password: string) => {
     try {

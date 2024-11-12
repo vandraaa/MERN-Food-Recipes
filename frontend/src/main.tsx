@@ -5,7 +5,7 @@ import "./index.css";
 import Fallback from "./components/protected/Fallback";
 import { ToastProvider } from "./context/ToastContext";
 import { AuthProvider } from "./context/AuthContext";
-import RoutesProvider from "./components/routes/route";
+import RoutesProvider from "./routes/route";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

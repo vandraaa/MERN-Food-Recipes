@@ -2,9 +2,17 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { getToken, saveToken } from '../pages/Auth/lib/action';
 import { JwtPayload, jwtDecode } from "jwt-decode";
 
+export interface PayloadJWTType {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  profileImage?: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: any;
+  user: PayloadJWTType;
   loginContext: (token: string) => void;
   logoutContext: () => void;
   role: string | null;

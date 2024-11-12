@@ -84,7 +84,7 @@ export default function ChangeUserData({ formData, setFormData, handleChange, se
 
   return (
     <div className="p-5 max-w-lg">
-      <h3 className="text-2xl font-semibold mb-6">Account Settings</h3>
+      <h3 className="text-lg sm:text-2xl font-semibold mb-6">Account Details</h3>
       <div className="space-y-4">
         <div>
           <InputWithLabel
