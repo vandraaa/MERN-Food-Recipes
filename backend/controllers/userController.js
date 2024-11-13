@@ -6,6 +6,7 @@ import Recipe from '../models/recipe.js';
 import Step from '../models/steps.js';
 import Ingredient from '../models/ingredients.js';
 import Feedback from '../models/feedback.js';
+import jwt from 'jsonwebtoken';
 
 
 // GET ALL USERS
@@ -79,10 +80,23 @@ export const editUser = async (req, res) => {
             return res.status(404).json({ status: "error", error: { code: 404, message: "User not found" } });
         }
 
+        const token = jwt.sign({ 
+            id: updatedUser._id, 
+            name: updatedUser.name, 
+            email: updatedUser.email, 
+            role: updatedUser.role, 
+            profileImage: updatedUser.image.imageUrl 
+        }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
         res.status(200).json({
             status: "success",
             message: "User updated",
-            data: updatedUser
+            data: {
+                id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                token
+            }
         });
     } catch (e) {
         console.error(e);
@@ -114,10 +128,29 @@ export const changePhoto = async (req, res) => {
 
         const updatedUser = await User.findByIdAndUpdate(id, { image: { fileName, imageUrl } }, { new: true });
 
+        const token = jwt.sign({
+            id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.role,
+            profileImage: updatedUser.image.imageUrl
+        }, process.env.JWT_SECRET, {
+            expiresIn: "7d"
+        });
+
         res.status(200).json({
             status: "success",
             message: "User updated",
-            data: updatedUser
+            data: {
+                id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                image: {
+                    fileName,
+                    imageUrl
+                },
+                token
+            }
         })
     } catch (e) {
         console.error(e);
