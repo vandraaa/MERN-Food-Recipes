@@ -5,6 +5,7 @@ import { useToast } from "../../../context/ToastContext";
 import { updateUserData } from "../lib/action";
 import Swal from "sweetalert2";
 import { UserProfileType } from "../lib/type";
+import { saveToken } from "../../Auth/lib/action";
 
 interface ChangeUserDataProps {
     formData: {
@@ -67,6 +68,7 @@ export default function ChangeUserData({ formData, setFormData, handleChange, se
                 role: prevData?.role || '',
                 image: prevData?.image || { fileName: '', imageUrl: '' },
               }))
+            saveToken(res.data.token, 'local');
         } else {
             Swal.fire({
                 icon: "error",

@@ -7,7 +7,8 @@ import SignIn from "../pages/Auth/Sign-in";
 import SignUp from "../pages/Auth/Sign-up";
 import PageNotFound from "../pages/Error/404";
 import ProfilePage from "../pages/Profile/Profile";
-import DashboardPage from "../pages/Dashboard/DashboardPage";
+import DashboardPage from "../pages/Dashboard/DashboardContent/DashboardPage";
+import CategoryDashboardPage from "../pages/Dashboard/CategoryContent/CategoryDashboardPage";
 
 const RoutesProvider = () => {
   const { isAuthenticated, role } = useAuth();
@@ -54,6 +55,16 @@ const RoutesProvider = () => {
         <ProtectedRoute
           element={<DashboardPage />}
           isAllowed={isAuthenticated && (role === "author" || role === "admin")}
+          redirectTo="/"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/categories",
+      element: (
+        <ProtectedRoute
+          element={<CategoryDashboardPage />}
+          isAllowed={isAuthenticated && role === "admin"}
           redirectTo="/"
         />
       ),

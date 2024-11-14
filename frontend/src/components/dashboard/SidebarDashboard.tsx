@@ -1,50 +1,101 @@
 import { useState } from "react";
-import { RiMenu3Fill, RiMenuFill, RiHomeFill, RiRestaurantFill, RiSettings3Fill, RiListCheck2, RiSeedlingFill } from "react-icons/ri";
 import { useLocation, Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { RiCalendarScheduleLine, RiHomeFill, RiListCheck2, RiMenu3Fill, RiMenuFill } from "react-icons/ri";
+import { TbToolsKitchen3 } from "react-icons/tb";
+import { IoRestaurant } from "react-icons/io5";
 
-interface MenuItem {
+interface ListMenuItem {
   name: string;
   path: string;
   icon: JSX.Element;
+  role?: string | null;
 }
+
+interface MenuItem {
+  title: string;
+  items: ListMenuItem[];
+}
+
+export const dashboardMenuItems: MenuItem[] = [
+  {
+    title: "Dashboard",
+    items: [{ name: "Dashboard", path: "/dashboard", icon: <RiHomeFill /> }],
+  },
+  {
+    title: "Recipe",
+    items: [
+      {
+        name: "Your Recipe",
+        path: "/dashboard/author-recipe",
+        icon: <TbToolsKitchen3 />,
+        role: "author",
+      },
+      { name: "Recipes", path: "/dashboard/recipe", icon: <IoRestaurant /> },
+      {
+        name: "Approve Recipe",
+        path: "/dashboard/confirm-recipes",
+        icon: <RiCalendarScheduleLine />,
+        role: "admin",
+      },
+    ],
+  },
+  {
+    title: "Category",
+    items: [
+      {
+        name: "Categories",
+        path: "/dashboard/categories",
+        icon: <RiListCheck2 />,
+        role: "admin",
+      },
+    ],
+  },
+];
 
 export default function SidebarDashboard() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-
-  const menuItems: MenuItem[] = [
-    { name: "Dashboard", path: "/dashboard", icon: <RiHomeFill /> },
-    { name: "Recipes", path: "/dashboard/recipe", icon: <RiRestaurantFill /> },
-    { name: "Ingredients", path: "/dashboard/ingredients", icon: <RiSeedlingFill /> },
-    { name: "Categories", path: "/dashboard/categories", icon: <RiListCheck2 /> },
-    { name: "Settings", path: "/dashboard/settings", icon: <RiSettings3Fill /> },
-  ];
+  const { role } = useAuth();
 
   return (
     <div className="h-full relative bg-white">
       <div className="hidden sm:block w-full bg-white h-full px-8 py-6">
         <div className="flex items-center gap-x-2">
-          <img src="/logo-transparent.png" alt="logo" className="size-10 lg:size-16" />
+          <Link to={'/'}>
+            <img src="/logo-transparent.png" alt="logo" className="size-10 lg:size-16" />
+          </Link>
           <div>
             <h1 className="lg:text-xl text-sm font-semibold">Dashboard</h1>
             <p className="text-gray-600 font-medium text-[10px] lg:text-sm">Vandra Kitchen</p>
           </div>
         </div>
         <div className="mt-6">
-          {menuItems.map((item) => (
-            <Link to={item.path} key={item.name}>
-              <div
-                className={`flex items-center gap-x-2 py-2 px-4 rounded-lg text-sm font-medium ${
-                  location.pathname === item.path ||
-                  (item.path === "/dashboard/recipe" && location.pathname.startsWith("/dashboard/recipe"))
-                    ? "bg-gray-100 text-blue-600"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                <span className="text-xl">{item.icon}</span>
-                {item.name}
-              </div>
-            </Link>
+          {dashboardMenuItems.map((section) => (
+            section.items.length > 0 && (
+              (section.title !== "Category" || role !== "author") && (
+                <div key={section.title}>
+                  <h3 className="font-semibold text-base mt-4 mb-1">{section.title}</h3>
+                  {section.items.map((item) => (
+                    (item.role ? item.role === role : true) && (
+                      <Link to={item.path} key={item.name}>
+                        <div
+                          className={`flex items-center gap-x-2 py-2 px-4 rounded-lg text-sm font-medium ${
+                            location.pathname === item.path ||
+                            (item.path === "/dashboard/recipe" && location.pathname.startsWith("/dashboard/recipe"))
+                              ? "bg-gray-100 text-blue-600"
+                              : "text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          <span className="text-xl">{item.icon}</span>
+                          {item.name}
+                        </div>
+                      </Link>
+                    )
+                  ))}
+                </div>
+              )
+            )
           ))}
         </div>
       </div>
@@ -68,7 +119,7 @@ export default function SidebarDashboard() {
         )}
 
         <div
-          className={`fixed inset-y-0 right-0 bg-white w-3/5 z-50 transform ${
+          className={`fixed inset-y-0 right-0 bg-white w-4/5 z-50 transform ${
             isOpen ? "translate-x-0" : "translate-x-full"
           } transition-transform duration-300 ease-in-out`}
         >
@@ -78,21 +129,32 @@ export default function SidebarDashboard() {
               <RiMenu3Fill className="text-xl" />
             </button>
           </div>
-          <div className="mt-4">
-            {menuItems.map((item) => (
-              <Link to={item.path} key={item.name} onClick={() => setIsOpen(false)}>
-                <div
-                  className={`flex items-center gap-x-2 py-2 px-4 rounded-lg text-sm font-medium ${
-                    location.pathname === item.path ||
-                    (item.path === "/dashboard/recipe" && location.pathname.startsWith("/dashboard/recipe"))
-                      ? "bg-gray-100 text-blue-600"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="text-xl">{item.icon}</span>
-                  {item.name}
-                </div>
-              </Link>
+          <div className="mt-4 px-6">
+            {dashboardMenuItems.map((section) => (
+              section.items.length > 0 && (
+                (section.title !== "Category" || role !== "author") && (
+                  <div key={section.title}>
+                    <h3 className="font-semibold text-base mt-4 mb-1">{section.title}</h3>
+                    {section.items.map((item) => (
+                      (item.role ? item.role === role : true) && (
+                        <Link to={item.path} key={item.name} onClick={() => setIsOpen(false)}>
+                          <div
+                            className={`flex items-center gap-x-2 py-2 px-4 rounded-lg text-sm font-medium ${
+                              location.pathname === item.path ||
+                              (item.path === "/dashboard/recipe" && location.pathname.startsWith("/dashboard/recipe"))
+                                ? "bg-gray-100 text-blue-600"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            <span className="text-xl">{item.icon}</span>
+                            {item.name}
+                          </div>
+                        </Link>
+                      )
+                    ))}
+                  </div>
+                )
+              )
             ))}
           </div>
         </div>

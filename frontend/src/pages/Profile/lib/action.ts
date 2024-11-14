@@ -17,7 +17,8 @@ export const updatePhotoProfileUser = async (file: File) => {
     const res = await axios.patch(url, formData, { headers });
     const response = {
       fileName: res.data.data.image.fileName,
-      imageUrl: res.data.data.image.imageUrl
+      imageUrl: res.data.data.image.imageUrl,
+      token: res.data.data.token
     };
     return response;
   } catch (e) {

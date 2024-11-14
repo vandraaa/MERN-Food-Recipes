@@ -2,6 +2,7 @@ import { useState } from "react";
 import { TbCameraPlus } from "react-icons/tb";
 import { updatePhotoProfileUser } from "../lib/action";
 import { UserProfileType } from "../lib/type";
+import { saveToken } from "../../Auth/lib/action";
 
 interface PhotoProfileProps {
     userData: UserProfileType | null;
@@ -25,6 +26,7 @@ export default function PhotoProfile({ userData, setUserData }: PhotoProfileProp
             email: prevData?.email || "",
             role: prevData?.role || "",
           }));
+          saveToken(image.token, 'local');
         }
       } catch (error) {
         console.log("Error uploading photo:", error);

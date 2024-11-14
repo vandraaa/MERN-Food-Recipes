@@ -2,7 +2,7 @@ import { useAuth } from "../context/AuthContext";
 import NavbarDashboard from "../components/dashboard/NavbarDashboard";
 import SidebarDashboard from "../components/dashboard/SidebarDashboard";
 
-export default function Dashboard({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { role, user } = useAuth();
 
   return (
