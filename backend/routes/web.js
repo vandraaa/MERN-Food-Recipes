@@ -9,6 +9,7 @@ import { createIngredient, deleteAllIngredientsByRecipeId, deleteIngredient, edi
 import { createFeedback, deleteFeedback, getFeedbackByRecipeId } from '../controllers/feedbackController.js';
 import { getSavedRecipeByUserId, saveRecipe, unsaveRecipe } from '../controllers/savedRecipeController.js';
 import { createStep, deleteAllStepsByRecipeId, deleteStep, updateStep } from '../controllers/stepsController.js';
+import { dashboardAdmin, dashboardAuthor } from '../controllers/dashboardController.js';
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ router.patch('/users', authMiddleware, editUser);
 router.patch('/changes-photo', authMiddleware, upload.single('image'), changePhoto);
 router.patch('/changes-password', authMiddleware, changePassword);
 router.delete('/users', authMiddleware, deleteUser);
+
+// dashboard routes
+router.get('/dashboard/admin', authMiddleware, dashboardAdmin);
+router.get('/dashboard/author', authMiddleware, dashboardAuthor);
 
 // category routes
 router.get('/categories', getAllCategories);
