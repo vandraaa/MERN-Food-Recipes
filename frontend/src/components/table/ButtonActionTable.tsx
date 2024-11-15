@@ -26,13 +26,13 @@ interface ButtonActionProps {
     onDelete: MouseEventHandler<HTMLButtonElement>;
 }
 
-const ButtonAction = ({ onEdit, onDelete }: ButtonActionProps) => {
+const ButtonActionTable = ({ onEdit, onDelete }: ButtonActionProps) => {
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
             <EditButton onClick={onEdit} />
             <DeleteButton onClick={onDelete} />
         </div>
     )
 };
 
-export default ButtonAction;
+export default ButtonActionTable;

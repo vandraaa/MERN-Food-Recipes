@@ -103,7 +103,9 @@ export default function SidebarDashboard() {
       <div className="sm:hidden">
         <div className="flex justify-between items-center px-4 py-4 bg-white border-b">
           <div className="flex items-center gap-x-2">
-            <img src="/logo-transparent.png" alt="logo" className="w-10 h-10" />
+            <Link to={'/'}>
+              <img src="/logo-transparent.png" alt="logo" className="w-10 h-10" />
+            </Link>
             <div>
               <h1 className="text-sm font-semibold">Dashboard</h1>
               <p className="text-gray-600 font-medium text-[10px]">Vandra Kitchen</p>

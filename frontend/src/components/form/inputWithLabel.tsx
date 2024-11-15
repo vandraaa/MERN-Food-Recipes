@@ -9,6 +9,7 @@ interface InputWithLabelProps {
   name: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
+  classnames?: string
 }
 
 export default function InputWithLabel({
@@ -19,6 +20,7 @@ export default function InputWithLabel({
   name,
   onChange,
   error,
+  classnames,
 }: InputWithLabelProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -27,7 +29,7 @@ export default function InputWithLabel({
   };
 
   return (
-    <div className="w-full relative">
+    <div className={`w-full relative ${classnames}`}>
       <p className="text-gray-600 font-semibold text-sm md:text-base lg:text-lg">
         {labelText}
       </p>
