@@ -17,7 +17,7 @@ export const dashboardAdmin = async (req, res) => {
         if (isAdmin.role === "admin") {
             const totalRecipes = await Recipe.countDocuments();
             const totalCategories = await Category.countDocuments();
-            const totalPendingRecipe = await Recipe.countDocuments({ isApproved: false });
+            const totalPendingRecipe = await Recipe.countDocuments({ status: 'pending' });
 
             const data = {
                 total_recipes: totalRecipes,
@@ -48,8 +48,8 @@ export const dashboardAuthor = async (req, res) => {
 
         if (isAuthor.role === "author") {
             const totalRecipes = await Recipe.countDocuments({ user: id })
-            const totalPendingRecipes = await Recipe.countDocuments({ user: id, isApproved: false })
-            const totalApproveRecipes = await Recipe.countDocuments({ user: id, isApproved: true })
+            const totalPendingRecipes = await Recipe.countDocuments({ user: id, status: 'pending' })
+            const totalApproveRecipes = await Recipe.countDocuments({ user: id, status: 'approved' })
 
             const data = {
                 total_recipes: totalRecipes,

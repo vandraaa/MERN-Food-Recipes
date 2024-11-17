@@ -108,7 +108,7 @@ export const getRecipeByCategoryId = async (req, res) => {
     }
 
     try {
-        const recipes = await Recipe.find({ category: categoryId, isApproved: true }).limit(5).populate("user", "name image").populate("category", "name");
+        const recipes = await Recipe.find({ category: categoryId, status: 'approved' }).limit(5).populate("user", "name image").populate("category", "name");
         if (!recipes) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Recipes not found" } });
         }
@@ -140,7 +140,7 @@ export const searchRecipesByTitle = async (req, res) => {
     }
 
     try {
-        const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }, isApproved: true })
+        const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }, status: 'approved' })
                                         .limit(5)
                                         .populate("user", "name image")
                                         .populate("category", "name");
@@ -264,9 +264,33 @@ export const approveRecipe = async (req, res) => {
             if (!recipe) {
                 return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
             }
-            recipe.isApproved = true;
+            recipe.status = "approved";
             await recipe.save();
             res.status(200).json({ status: "success", message: "Recipe approved" });
+        } else {
+            return res.status(401).json({ status: "error", error: { code: 401, message: "Access denied" } });
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
+
+// REJECT RECIPE
+export const rejectRecipe = async (req, res) => {
+    const id = req.user.id;
+    const { recipeId } = req.body;
+
+    try {
+        const isAdmin = await User.findOne({ _id: id });
+        if (isAdmin.role === "admin") {
+            const recipe = await Recipe.findById(recipeId);
+            if (!recipe) {
+                return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
+            }
+            recipe.status = "rejected";
+            await recipe.save();
+            res.status(200).json({ status: "success", message: "Recipe rejected" });
         } else {
             return res.status(401).json({ status: "error", error: { code: 401, message: "Access denied" } });
         }
