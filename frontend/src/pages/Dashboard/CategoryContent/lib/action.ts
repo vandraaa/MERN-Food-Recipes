@@ -6,7 +6,7 @@ interface Category {
   name: string;
 }
 
-type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export const handleAddCategory = async (
   formData: { [key: string]: string },

@@ -4,6 +4,7 @@ interface TableProps {
   headers: string[];
   rows: { [key: string]: any }[];
   action?: (row: { [key: string]: any }) => React.ReactNode;
+  updateStatus?: (row: { [key: string]: any }) => React.ReactNode;
   loading?: boolean;
 }
 
@@ -11,6 +12,7 @@ export default function Table({
   headers,
   rows,
   action,
+  updateStatus,
   loading = false,
 }: TableProps) {
   return (
@@ -40,7 +42,10 @@ export default function Table({
             </tr>
           ) : rows.length === 0 ? (
             <tr>
-              <td colSpan={headers.length} className="text-gray-500 py-6 text-sm font-medium">
+              <td
+                colSpan={headers.length}
+                className="text-gray-500 py-6 text-sm font-medium"
+              >
                 No Data Available.
               </td>
             </tr>
@@ -52,13 +57,34 @@ export default function Table({
                   .map((key, cellIndex) => (
                     <td
                       key={cellIndex}
-                      className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-xs sm:text-sm text-gray-700"
+                      className={`px-6 ${
+                        row["image"] ? "h-24" : "py-4"
+                      } whitespace-nowrap border-b border-gray-200 text-xs sm:text-sm text-gray-700 align-middle`}
                     >
-                      {row[key]}
+                      {key === "image" ? (
+                        <img
+                          src={row[key]}
+                          alt="recipe"
+                          className="h-4/5 max-h-4/5 object-contain mx-auto"
+                        />
+                      ) : (
+                        row[key]
+                      )}
                     </td>
                   ))}
-                <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-xs sm:text-sm flex items-center justify-center gap-x-2 text-gray-700">
-                  {action && action(row)} 
+                <td
+                  className={`${
+                    row["image"] ? "h-24 px-2" : "py-4"
+                  } whitespace-nowrap border-b border-gray-200 text-xs sm:text-sm text-gray-700 align-middle`}
+                >
+                  {action && action(row)}
+                </td>
+                <td
+                  className={`${
+                    row["image"] ? "h-24 px-2" : "py-4"
+                  } whitespace-nowrap border-b border-gray-200 text-xs sm:text-sm text-gray-700 align-middle`}
+                >
+                  {updateStatus && updateStatus(row)}
                 </td>
               </tr>
             ))

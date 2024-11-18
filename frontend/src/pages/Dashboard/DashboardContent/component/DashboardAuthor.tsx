@@ -5,6 +5,7 @@ interface statisticAuthorType {
   total_recipes: number;
   total_pending_recipes: number;
   total_approve_recipes: number;
+  total_reject_recipes: number;
 }
 
 export default function DashboardAuthor() {
@@ -54,6 +55,22 @@ export default function DashboardAuthor() {
 
       <div className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-4">
         <div className="bg-slate-50 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+          <h2 className="sm:text-lg text-base font-semibold text-gray-700">Approved Recipes</h2>
+          {isLoading ? (
+            <SkeletonLoader />
+          ) : (
+            <>
+              <p className="sm:text-2xl text-xl font-bold text-green-600 sm:mt-4 mt-2">
+                {statisticData?.total_approve_recipes}
+              </p>
+              <p className="sm:text-sm text-xs text-gray-500 mt-2">Recipes successfully published</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-4">
+        <div className="bg-slate-50 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
           <h2 className="sm:text-lg text-base font-semibold text-gray-700">Pending Recipes</h2>
           {isLoading ? (
             <SkeletonLoader />
@@ -70,15 +87,15 @@ export default function DashboardAuthor() {
 
       <div className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-4">
         <div className="bg-slate-50 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-          <h2 className="sm:text-lg text-base font-semibold text-gray-700">Approved Recipes</h2>
+          <h2 className="sm:text-lg text-base font-semibold text-gray-700">Rejected Recipes</h2>
           {isLoading ? (
             <SkeletonLoader />
           ) : (
             <>
               <p className="sm:text-2xl text-xl font-bold text-green-600 sm:mt-4 mt-2">
-                {statisticData?.total_approve_recipes}
+                {statisticData?.total_reject_recipes}
               </p>
-              <p className="sm:text-sm text-xs text-gray-500 mt-2">Recipes successfully published</p>
+              <p className="sm:text-sm text-xs text-gray-500 mt-2">Recipes rejected</p>
             </>
           )}
         </div>

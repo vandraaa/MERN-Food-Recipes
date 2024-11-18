@@ -9,6 +9,9 @@ import PageNotFound from "../pages/Error/404";
 import ProfilePage from "../pages/Profile/Profile";
 import DashboardPage from "../pages/Dashboard/DashboardContent/DashboardPage";
 import CategoryDashboardPage from "../pages/Dashboard/CategoryContent/CategoryDashboardPage";
+import ApprovedRecipeDashboardPage from "../pages/Dashboard/ApprovedRecipeContent/ApprovedRecipePage";
+import PendingRecipeDashboardPage from "../pages/Dashboard/PendingRecipeContent/PendingRecipePage";
+import RejectedRecipeDashboardPage from "../pages/Dashboard/RejectedRecipeContent/RejectedRecipePage";
 
 const RoutesProvider = () => {
   const { isAuthenticated, role } = useAuth();
@@ -65,6 +68,36 @@ const RoutesProvider = () => {
         <ProtectedRoute
           element={<CategoryDashboardPage />}
           isAllowed={isAuthenticated && role === "admin"}
+          redirectTo="/"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/approved-recipes",
+      element: (
+        <ProtectedRoute
+          element={<ApprovedRecipeDashboardPage />}
+          isAllowed={isAuthenticated}
+          redirectTo="/"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/pending-recipes",
+      element: (
+        <ProtectedRoute
+          element={<PendingRecipeDashboardPage />}
+          isAllowed={isAuthenticated}
+          redirectTo="/"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/rejected-recipes",
+      element: (
+        <ProtectedRoute
+          element={<RejectedRecipeDashboardPage />}
+          isAllowed={isAuthenticated}
           redirectTo="/"
         />
       ),

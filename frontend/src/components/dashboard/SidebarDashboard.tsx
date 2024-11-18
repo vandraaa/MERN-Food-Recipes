@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { RiCalendarScheduleLine, RiHomeFill, RiListCheck2, RiMenu3Fill, RiMenuFill } from "react-icons/ri";
-import { TbToolsKitchen3 } from "react-icons/tb";
-import { IoRestaurant } from "react-icons/io5";
+import { IoCreateSharp, IoRestaurant } from "react-icons/io5";
+import { FaRegCalendarXmark } from "react-icons/fa6";
 
 interface ListMenuItem {
   name: string;
@@ -23,20 +23,19 @@ export const dashboardMenuItems: MenuItem[] = [
     items: [{ name: "Dashboard", path: "/dashboard", icon: <RiHomeFill /> }],
   },
   {
-    title: "Recipe",
+    title: "Recipes",
     items: [
+      { name: "Create", path: "/dashboard/recipe", icon: <IoCreateSharp />, role: "author" },
+      { name: "Approved", path: "/dashboard/approved-recipes", icon: <IoRestaurant /> },
       {
-        name: "Your Recipe",
-        path: "/dashboard/author-recipe",
-        icon: <TbToolsKitchen3 />,
-        role: "author",
-      },
-      { name: "Recipes", path: "/dashboard/recipe", icon: <IoRestaurant /> },
-      {
-        name: "Approve Recipe",
-        path: "/dashboard/confirm-recipes",
+        name: "Pending",
+        path: "/dashboard/pending-recipes",
         icon: <RiCalendarScheduleLine />,
-        role: "admin",
+      },
+      {
+        name: "Rejected",
+        path: "/dashboard/rejected-recipes",
+        icon: <FaRegCalendarXmark />,
       },
     ],
   },
