@@ -18,11 +18,15 @@ export const dashboardAdmin = async (req, res) => {
             const totalRecipes = await Recipe.countDocuments();
             const totalCategories = await Category.countDocuments();
             const totalPendingRecipe = await Recipe.countDocuments({ status: 'pending' });
+            const totalApproveRecipe = await Recipe.countDocuments({ status: 'approved' });
+            const totalRejectRecipe = await Recipe.countDocuments({ status: 'rejected' });
 
             const data = {
                 total_recipes: totalRecipes,
                 total_categories: totalCategories,
-                total_pending_recipe: totalPendingRecipe
+                total_pending_recipe: totalPendingRecipe,
+                total_approve_recipe: totalApproveRecipe,
+                total_reject_recipe: totalRejectRecipe
             }
 
             return res.status(200).json({ status: "success", message: "Dashboard statistics found", data })
@@ -50,11 +54,13 @@ export const dashboardAuthor = async (req, res) => {
             const totalRecipes = await Recipe.countDocuments({ user: id })
             const totalPendingRecipes = await Recipe.countDocuments({ user: id, status: 'pending' })
             const totalApproveRecipes = await Recipe.countDocuments({ user: id, status: 'approved' })
+            const totalRejectRecipes = await Recipe.countDocuments({ user: id, status: 'rejected' })
 
             const data = {
                 total_recipes: totalRecipes,
                 total_pending_recipes: totalPendingRecipes,
-                total_approve_recipes: totalApproveRecipes
+                total_approve_recipes: totalApproveRecipes,
+                total_reject_recipes: totalRejectRecipes
             }
 
             return res.status(200).json({ status: "success", message: "Dashboard statistics found", data })

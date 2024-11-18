@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { changePassword, changePhoto, deleteUser, editUser, getAllUsers, getUserById } from '../controllers/userController.js';
 import { createCategory, deleteCategory, editCategory, getAllCategories, getCategoryById } from '../controllers/categoryController.js';
-import { approveRecipe, createRecipe, deleteRecipe, editRecipe, getRecipeByCategoryId, getRecipeById, rejectRecipe, searchRecipesByTitle } from '../controllers/recipeController.js';
+import { createRecipe, deleteRecipe, editRecipe, getRecipeByCategoryId, getRecipeById, listRecipeByStatus, searchRecipesByTitle, updateRecipeStatus } from '../controllers/recipeController.js';
 import { loginUser, registerUser } from '../controllers/authController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { createIngredient, deleteAllIngredientsByRecipeId, deleteIngredient, editIngredient } from '../controllers/ingredientsController.js';
@@ -47,8 +47,8 @@ router.get('/recipes/:id', getRecipeById);
 router.get('/recipes', getRecipeByCategoryId);
 router.get('/search/recipes', searchRecipesByTitle);
 router.delete('/recipes/:id', authMiddleware, deleteRecipe);
-router.post('/approve-recipe', authMiddleware, approveRecipe);
-router.post('/reject-recipe', authMiddleware, rejectRecipe);
+router.post('/update-status-recipe', authMiddleware, updateRecipeStatus);
+router.get('/list-recipe', authMiddleware, listRecipeByStatus);
 
 // steps routes
 router.post('/recipe/steps/:recipeId', authMiddleware, createStep);

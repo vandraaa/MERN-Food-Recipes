@@ -244,10 +244,10 @@ export const deleteRecipe = async (req, res) => {
     }
 }
 
-// APPROVE RECIPE
-export const approveRecipe = async (req, res) => {
+// UPDATE RECIPE STATUS
+export const updateRecipeStatus = async (req, res) => {
     const id = req.user.id;
-    const { recipeId } = req.body;
+    const { recipeId, status } = req.body;
 
     if (!isValidObjectId(id)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
@@ -264,11 +264,23 @@ export const approveRecipe = async (req, res) => {
             if (!recipe) {
                 return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
             }
-            recipe.status = "approved";
-            await recipe.save();
-            res.status(200).json({ status: "success", message: "Recipe approved" });
+
+            const updatedRecipe = await Recipe.findByIdAndUpdate(recipeId, { status }, { new: true });
+            res.status(200).json({ status: "success", data: updatedRecipe, message: "Recipe status updated" });
+        } else if (isAdmin.role === "author") {
+            const recipe = await Recipe.findById(recipeId);
+            if (!recipe) {
+                return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
+            }
+
+            if (recipe.user.toString() === id) {
+                const updatedRecipe = await Recipe.findByIdAndUpdate(recipeId, { status: "pending" }, { new: true });
+                res.status(200).json({ status: "success", data: updatedRecipe, message: "Recipe status updated" });
+            } else {
+                return res.status(403).json({ status: "error", error: { code: 403, message: "You are not authorized to update this recipe" } });
+            }
         } else {
-            return res.status(401).json({ status: "error", error: { code: 401, message: "Access denied" } });
+            return res.status(403).json({ status: "error", error: { code: 403, message: "You are not authorized to update this recipe" } });
         }
     } catch (e) {
         console.error(e);
@@ -276,26 +288,35 @@ export const approveRecipe = async (req, res) => {
     }
 }
 
-// REJECT RECIPE
-export const rejectRecipe = async (req, res) => {
+// LIST RECIPE BY STATUS
+export const listRecipeByStatus = async (req, res) => {
     const id = req.user.id;
-    const { recipeId } = req.body;
+
+    if (!isValidObjectId(id)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid user ID" } });
+    }
+
+    const { status } = req.query;
+
+    if (!["approved", "pending", "rejected"].includes(status)) {
+        return res.status(400).json({
+            status: "error",
+            error: { code: 400, message: "Invalid status parameter" },
+        });
+    }
 
     try {
         const isAdmin = await User.findOne({ _id: id });
         if (isAdmin.role === "admin") {
-            const recipe = await Recipe.findById(recipeId);
-            if (!recipe) {
-                return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
-            }
-            recipe.status = "rejected";
-            await recipe.save();
-            res.status(200).json({ status: "success", message: "Recipe rejected" });
+            const recipes = await Recipe.find({ status });
+            res.status(200).json({ status: "success", data: recipes });
+        } else if (isAdmin.role === "author") {
+            const recipes = await Recipe.find({ user: id, status });
+            res.status(200).json({ status: "success", data: recipes });
         } else {
             return res.status(401).json({ status: "error", error: { code: 401, message: "Access denied" } });
         }
     } catch (e) {
         console.error(e);
-        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
     }
 }
