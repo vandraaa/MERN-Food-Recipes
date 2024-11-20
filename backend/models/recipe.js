@@ -38,8 +38,8 @@ const recipeSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'approved', 'rejected'],
-        default: 'pending'
+        enum: ['draft', 'pending', 'approved', 'rejected'],
+        default: 'draft'
     },
     ingredients: [
         {

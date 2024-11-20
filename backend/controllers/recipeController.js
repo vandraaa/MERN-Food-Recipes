@@ -298,7 +298,7 @@ export const listRecipeByStatus = async (req, res) => {
 
     const { status } = req.query;
 
-    if (!["approved", "pending", "rejected"].includes(status)) {
+    if (!["approved", "pending", "rejected", "draft"].includes(status)) {
         return res.status(400).json({
             status: "error",
             error: { code: 400, message: "Invalid status parameter" },
