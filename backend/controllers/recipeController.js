@@ -272,6 +272,19 @@ export const updateRecipeStatus = async (req, res) => {
             if (!recipe) {
                 return res.status(404).json({ status: "error", error: { code: 404, message: "Recipe not found" } });
             }
+            if (recipe.status === "pending") {
+                return res.status(400).json({ status: "error", error: { code: 400, message: "Recipe is already pending" } });
+            }
+
+            const ingredientsExist = await Ingredient.find({ recipe: recipeId });
+            if (ingredientsExist.length === 0) {
+                return res.status(400).json({ status: "error", error: { code: 400, message: "Please add ingredients to the recipe" } });
+            }
+
+            const stepsExist = await Step.find({ recipe: recipeId });
+            if (stepsExist.length === 0) {
+                return res.status(400).json({ status: "error", error: { code: 400, message: "Please add steps to the recipe" } });
+            }
 
             if (recipe.user.toString() === id) {
                 const updatedRecipe = await Recipe.findByIdAndUpdate(recipeId, { status: "pending" }, { new: true });
