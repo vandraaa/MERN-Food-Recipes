@@ -56,7 +56,7 @@ export default function NavbarDashboard({ user, role }: NavbarDashboardProps) {
   }, []);
 
   return (
-    <div className="py-4 sm:py-6 w-full bg-white rounded-md px-4 sm:px-8 flex justify-between items-center">
+    <div className="py-4 sm:py-6 w-full mt-[4.2rem] sm:mt-0 bg-white rounded-md px-4 sm:px-8 flex justify-between items-center">
       <div>
         <p className="sm:text-base text-xs font-medium text-gray-800">
           Welcome, {user?.name}

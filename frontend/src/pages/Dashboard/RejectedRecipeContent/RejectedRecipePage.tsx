@@ -3,14 +3,14 @@ import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getListRejectedRecipe } from "./lib/data";
 import ButtonActionTable from "../../../components/table/ButtonActionTable";
-import Swal from "sweetalert2";
-import { updateStatusRecipe } from "../PendingRecipeContent/lib/data";
 import ButtonUpdateStatus from "../../../components/table/ButtonUpdateStatus";
 import DashboardLayout from "../../../layout/Dashboard";
 import TitleDashboardContent from "../../../components/dashboard/TitleDashboardContent";
 import SearchInputTable from "../../../components/table/SearchInputTable";
 import Table from "../../../components/table/Table";
 import { handleDeleteRecipe } from "../ApprovedRecipeContent/lib/action";
+import { handleUpdateStatusRecipe } from "./lib/action";
+import StatusBadge from "../../../components/form/statusBadge";
 
 
 interface ListRecipe {
@@ -54,7 +54,7 @@ interface ListRecipe {
         no: index + 1,
         image: item.image.imageUrl,
         title: item.title,
-        status: item.status.toUpperCase(),
+        status: <StatusBadge status={item.status} />,
       }));
   
     const renderActions = (id: string) => {
@@ -76,54 +76,17 @@ interface ListRecipe {
       }
     };
   
-    const handleUpdateStatusRecipe = async (id: string, status: 'approved' | 'rejected' | 'pending') => {
-          try {
-              console.log(id, status)
-              Swal.fire({
-                  title: 'Are you sure?',
-                  text: "You won't be able to revert this!",
-                  icon: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  cancelButtonColor: '#d33',
-                  confirmButtonText: 'Yes, update it!'
-              }).then(async (result) => {
-                  if (result.isConfirmed) {
-                      setIsLoading(true);
-                      const res = await updateStatusRecipe(id, status);
-                      if (res.status === "success") {
-                          const data = await getListRejectedRecipe();
-                          setData(data.data);
-                          setIsLoading(false);
-                          Swal.fire(
-                              'Updated!',
-                              res.message,
-                              'success'
-                          )
-                      } else {
-                          Swal.fire("Error!", res.error.message, "error");
-                          setIsLoading(false);
-                      }
-                  }
-              })
-          } catch (error) {
-              console.error(error)
-              setIsLoading(false);
-              Swal.fire("Error!", "Failed to update status recipe.", "error");
-          }
-      }
-  
     const renderUpdateStatus = (id: string) => {
       if (role === "admin") {
         return (
           <ButtonUpdateStatus
-              onApproved={() => handleUpdateStatusRecipe(id, "approved")}
+              onApproved={() => handleUpdateStatusRecipe(id, "approved", setIsLoading, setData)}
           />
         );
       } else if (role === "author") {
         return (
           <ButtonUpdateStatus
-              onApply={() => handleUpdateStatusRecipe(id, "pending")}
+              onApply={() => handleUpdateStatusRecipe(id, "pending", setIsLoading, setData)}
           />
         );
       }

@@ -100,7 +100,7 @@ export default function SignUp() {
                 error={errors.password}
               />
               <div className="pt-4">
-                <Button onClick={register}>
+                <Button onClick={register} disabled={loading}>
                   {loading ? "Signing Up..." : "Sign Up"}
                 </Button>
               </div>

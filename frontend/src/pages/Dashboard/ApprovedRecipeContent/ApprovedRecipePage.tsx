@@ -8,6 +8,7 @@ import SearchInputTable from "../../../components/table/SearchInputTable";
 import Table from "../../../components/table/Table";
 import ButtonActionTable from "../../../components/table/ButtonActionTable";
 import { handleDeleteRecipe } from "./lib/action";
+import StatusBadge from "../../../components/form/statusBadge";
 
 interface ListRecipe {
   _id: string;
@@ -51,7 +52,7 @@ export default function ApprovedRecipeDashboardPage() {
       no: index + 1,
       image: item.image.imageUrl,
       title: item.title,
-      status: item.status.toUpperCase(),
+      status: <StatusBadge status={item.status} />,
     }));
 
   const renderActions = (id: string) => {

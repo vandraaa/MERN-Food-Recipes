@@ -12,6 +12,8 @@ import CategoryDashboardPage from "../pages/Dashboard/CategoryContent/CategoryDa
 import ApprovedRecipeDashboardPage from "../pages/Dashboard/ApprovedRecipeContent/ApprovedRecipePage";
 import PendingRecipeDashboardPage from "../pages/Dashboard/PendingRecipeContent/PendingRecipePage";
 import RejectedRecipeDashboardPage from "../pages/Dashboard/RejectedRecipeContent/RejectedRecipePage";
+import CreateRecipeDashboardPage from "../pages/Dashboard/CreateRecipeContent/CreateRecipePage";
+import DraftRecipeDashboardPage from "../pages/Dashboard/DraftRecipeContent/DraftRecipePage";
 
 const RoutesProvider = () => {
   const { isAuthenticated, role } = useAuth();
@@ -73,6 +75,16 @@ const RoutesProvider = () => {
       ),
     },
     {
+      path: "/dashboard/create-recipe",
+      element: (
+        <ProtectedRoute
+          element={<CreateRecipeDashboardPage />}
+          isAllowed={isAuthenticated && role === "author"}
+          redirectTo="/dashboard"
+        />
+      ),
+    },
+    {
       path: "/dashboard/approved-recipes",
       element: (
         <ProtectedRoute
@@ -99,6 +111,16 @@ const RoutesProvider = () => {
           element={<RejectedRecipeDashboardPage />}
           isAllowed={isAuthenticated}
           redirectTo="/"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/draft-recipes",
+      element: (
+        <ProtectedRoute
+          element={<DraftRecipeDashboardPage />}
+          isAllowed={isAuthenticated && role === "author"}
+          redirectTo="/dashboard"
         />
       ),
     },

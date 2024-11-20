@@ -92,7 +92,7 @@ export default function SignIn() {
               />
 
               <div className="pt-4">
-                <Button onClick={login}>
+                <Button onClick={login} disabled={loading}>
                   {loading ? "Signing In..." : "Sign In"}
                 </Button>
               </div>

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { RiCalendarScheduleLine, RiHomeFill, RiListCheck2, RiMenu3Fill, RiMenuFill } from "react-icons/ri";
-import { IoCreateSharp, IoRestaurant } from "react-icons/io5";
+import { IoCreateSharp } from "react-icons/io5";
 import { FaRegCalendarXmark } from "react-icons/fa6";
+import { IoMdArchive } from "react-icons/io";
+import { FaRegCalendarCheck } from "react-icons/fa";
 
 interface ListMenuItem {
   name: string;
@@ -25,8 +27,9 @@ export const dashboardMenuItems: MenuItem[] = [
   {
     title: "Recipes",
     items: [
-      { name: "Create", path: "/dashboard/recipe", icon: <IoCreateSharp />, role: "author" },
-      { name: "Approved", path: "/dashboard/approved-recipes", icon: <IoRestaurant /> },
+      { name: "Create", path: "/dashboard/create-recipe", icon: <IoCreateSharp />, role: "author" },
+      { name: "Your Draft", path: "/dashboard/draft-recipes", icon: <IoMdArchive />, role: "author" },
+      { name: "Approved", path: "/dashboard/approved-recipes", icon: <FaRegCalendarCheck />},
       {
         name: "Pending",
         path: "/dashboard/pending-recipes",
@@ -81,7 +84,7 @@ export default function SidebarDashboard() {
                         <div
                           className={`flex items-center gap-x-2 py-2 px-4 rounded-lg text-sm font-medium ${
                             location.pathname === item.path ||
-                            (item.path === "/dashboard/recipe" && location.pathname.startsWith("/dashboard/recipe"))
+                            (item.path === "/dashboard/draft-recipe" && location.pathname.startsWith("/dashboard/draft-recipe"))
                               ? "bg-gray-100 text-blue-600"
                               : "text-gray-700 hover:bg-gray-50"
                           }`}
@@ -99,7 +102,7 @@ export default function SidebarDashboard() {
         </div>
       </div>
 
-      <div className="sm:hidden">
+      <div className="sm:hidden fixed z-50 w-full">
         <div className="flex justify-between items-center px-4 py-4 bg-white border-b">
           <div className="flex items-center gap-x-2">
             <Link to={'/'}>
