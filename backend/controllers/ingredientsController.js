@@ -35,6 +35,30 @@ export const createIngredient = async (req, res) => {
     }
 };
 
+// GET ALL INGREDIENTS
+export const getAllIngredients = async (req, res) => {
+    const { id } = req.params;
+
+    if(!isValidObjectId(id)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid recipe ID" } });
+    }
+
+    try {
+        const ingredients = await Ingredient.find({ recipe: id });
+
+        const data = ingredients.map((ingredient) => ({
+            id: ingredient._id,
+            name: ingredient.name,
+            quantity: ingredient.quantity,
+        }));
+
+        res.status(200).json({ status: "success", data: data, message: "Ingredients found" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
+
 // EDIT INGREDIENT
 export const editIngredient = async (req, res) => {
     const { id } = req.params;

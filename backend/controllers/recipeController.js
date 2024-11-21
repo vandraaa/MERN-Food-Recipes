@@ -37,7 +37,7 @@ export const createRecipe = async (req, res) => {
             },
             servings,
             cooking_time: cookingTime,
-            categoryId
+            category: categoryId
         });
 
         const savedRecipe = await newRecipe.save();
@@ -70,8 +70,8 @@ export const getRecipeById = async (req, res) => {
 
     try {
         const recipe = await Recipe.findOne({ _id: id })
-                                .populate("user", "name email profile_picture")
-                                .populate("category", "name")
+                                .populate("user", "name email image")
+                                .populate("category")
                                 .populate("ingredients", "name quantity")
                                 .populate("steps", "step_number instruction")
 

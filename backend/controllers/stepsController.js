@@ -43,6 +43,30 @@ export const createStep = async (req, res) => {
     }
 }
 
+// GET ALL STEPS
+export const getAllSteps = async (req, res) => {
+    const { recipeId } = req.params;
+
+    if(!isValidObjectId(id)) {
+        return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid recipe ID" } });
+    }
+
+    try {
+        const steps = await Step.find({ recipe: id });
+
+        const data = steps.map((step) => ({
+            id: step._id,
+            step_number: step.step_number,
+            instruction: step.instruction
+        }));
+
+        res.status(200).json({ status: "success", data: data, message: "Steps found" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
+
 // UPDATE A STEP
 export const updateStep = async (req, res) => {
     const { instruction } = req.body;

@@ -5,10 +5,10 @@ import { createCategory, deleteCategory, editCategory, getAllCategories, getCate
 import { createRecipe, deleteRecipe, editRecipe, getRecipeByCategoryId, getRecipeById, listRecipeByStatus, searchRecipesByTitle, updateRecipeStatus } from '../controllers/recipeController.js';
 import { loginUser, registerUser } from '../controllers/authController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
-import { createIngredient, deleteAllIngredientsByRecipeId, deleteIngredient, editIngredient } from '../controllers/ingredientsController.js';
+import { createIngredient, deleteAllIngredientsByRecipeId, deleteIngredient, editIngredient, getAllIngredients } from '../controllers/ingredientsController.js';
 import { createFeedback, deleteFeedback, getFeedbackByRecipeId } from '../controllers/feedbackController.js';
 import { getSavedRecipeByUserId, saveRecipe, unsaveRecipe } from '../controllers/savedRecipeController.js';
-import { createStep, deleteAllStepsByRecipeId, deleteStep, updateStep } from '../controllers/stepsController.js';
+import { createStep, deleteAllStepsByRecipeId, deleteStep, getAllSteps, updateStep } from '../controllers/stepsController.js';
 import { dashboardAdmin, dashboardAuthor } from '../controllers/dashboardController.js';
 
 const router = express.Router();
@@ -52,12 +52,14 @@ router.get('/list-recipe', authMiddleware, listRecipeByStatus);
 
 // steps routes
 router.post('/recipe/steps/:recipeId', authMiddleware, createStep);
+router.get('/recipe/steps/:recipeId', authMiddleware, getAllSteps);
 router.patch('/recipe/steps/:stepId', authMiddleware, updateStep);
 router.delete('/recipe/steps/:stepId', authMiddleware, deleteStep);
 router.delete('/recipe/steps/all/:recipeId', authMiddleware, deleteAllStepsByRecipeId);
 
 // ingredient routes
 router.post('/recipes/ingredients/:id', authMiddleware, createIngredient);
+router.get('/recipes/ingredients/:id', authMiddleware, getAllIngredients);
 router.patch('/recipes/ingredients/:id', authMiddleware, editIngredient);
 router.delete('/recipes/ingredients/:id', authMiddleware, deleteIngredient);
 router.delete('/recipes/ingredients/all/:id', authMiddleware, deleteAllIngredientsByRecipeId);
