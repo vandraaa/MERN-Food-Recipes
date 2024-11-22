@@ -47,12 +47,12 @@ export const createStep = async (req, res) => {
 export const getAllSteps = async (req, res) => {
     const { recipeId } = req.params;
 
-    if(!isValidObjectId(id)) {
+    if(!isValidObjectId(recipeId)) {
         return res.status(400).json({ status: "error", error: { code: 400, message: "Invalid recipe ID" } });
     }
 
     try {
-        const steps = await Step.find({ recipe: id });
+        const steps = await Step.find({ recipe: recipeId });
 
         const data = steps.map((step) => ({
             id: step._id,
