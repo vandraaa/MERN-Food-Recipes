@@ -20,7 +20,7 @@ const StatusBadge = ({ status }: BadgeProps) => {
 
   return (
     <span
-      className={`px-5 py-1 text-sm font-medium rounded-xl ${getBadgeColor(
+      className={`px-5 py-1 text-xs sm:text-sm font-medium rounded-xl ${getBadgeColor(
         status
       )}`}
     >

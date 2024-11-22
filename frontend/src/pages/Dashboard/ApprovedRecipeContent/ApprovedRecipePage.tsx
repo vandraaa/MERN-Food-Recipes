@@ -32,7 +32,7 @@ export default function ApprovedRecipeDashboardPage() {
       try {
         const res = await getListApprovedRecipe();
         setData(res.data);
-        console.log(res.data)
+        console.log(res.data);
       } catch (e) {
         console.error(e);
       } finally {
@@ -43,17 +43,48 @@ export default function ApprovedRecipeDashboardPage() {
     fetchData();
   }, []);
 
-  const filteredRows = data
-    .filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .map((item, index) => ({
-      id: item._id,
-      no: index + 1,
-      image: item.image.imageUrl,
-      title: item.title,
-      status: <StatusBadge status={item.status} />,
-    }));
+  const filteredRows =
+    role === "author"
+      ? data
+          .filter((item) =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map((item, index) => ({
+            id: item._id,
+            no: index + 1,
+            image: item.image.imageUrl,
+            title: item.title,
+            ingredients: (
+              <button
+                className="text-blue-500 underline hover:text-blue-700"
+                onClick={() =>
+                  navigate(`/dashboard/recipe/ingredients/${item._id}`)
+                }
+              >
+                View Ingredients
+              </button>
+            ),
+            steps: (
+              <button
+                className="text-blue-500 underline hover:text-blue-700"
+                onClick={() => navigate(`/dashboard/recipe/steps/${item._id}`)}
+              >
+                View Steps
+              </button>
+            ),
+            status: <StatusBadge status={item.status} />,
+          }))
+      : data
+          .filter((item) =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map((item, index) => ({
+            id: item._id,
+            no: index + 1,
+            image: item.image.imageUrl,
+            title: item.title,
+            status: <StatusBadge status={item.status} />,
+          }));
 
   const renderActions = (id: string) => {
     if (role === "author") {
@@ -74,6 +105,11 @@ export default function ApprovedRecipeDashboardPage() {
     }
   };
 
+  const headers =
+    role === "admin"
+      ? ["No", "Image", "Title", "Status", "Action"]
+      : ["No", "Image", "Title", "Ingredients", "Steps", "Status", "Action"];
+
   return (
     <DashboardLayout>
       <TitleDashboardContent>Approved Recipe</TitleDashboardContent>
@@ -86,7 +122,7 @@ export default function ApprovedRecipeDashboardPage() {
       </div>
 
       <Table
-        headers={["No", "Image", "Title", "Status", "Action"]}
+        headers={headers}
         rows={filteredRows}
         action={(row) => renderActions(row.id)}
         loading={isLoading}

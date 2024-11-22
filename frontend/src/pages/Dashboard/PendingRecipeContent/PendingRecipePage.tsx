@@ -44,17 +44,48 @@ export default function PendingRecipeDashboardPage() {
     fetchData();
   }, []);
 
-  const filteredRows = data
-    .filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .map((item, index) => ({
-      id: item._id,
-      no: index + 1,
-      image: item.image.imageUrl,
-      title: item.title,
-      status: <StatusBadge status={item.status} />,
-    }));
+  const filteredRows =
+    role === "author"
+      ? data
+          .filter((item) =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map((item, index) => ({
+            id: item._id,
+            no: index + 1,
+            image: item.image.imageUrl,
+            title: item.title,
+            ingredients: (
+              <button
+                className="text-blue-500 underline hover:text-blue-700"
+                onClick={() =>
+                  navigate(`/dashboard/recipe/ingredients/${item._id}`)
+                }
+              >
+                View Ingredients
+              </button>
+            ),
+            steps: (
+              <button
+                className="text-blue-500 underline hover:text-blue-700"
+                onClick={() => navigate(`/dashboard/recipe/steps/${item._id}`)}
+              >
+                View Steps
+              </button>
+            ),
+            status: <StatusBadge status={item.status} />,
+          }))
+      : data
+          .filter((item) =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map((item, index) => ({
+            id: item._id,
+            no: index + 1,
+            image: item.image.imageUrl,
+            title: item.title,
+            status: <StatusBadge status={item.status} />,
+          }));
 
   const renderActions = (id: string) => {
     if (role === "author") {
@@ -79,17 +110,21 @@ export default function PendingRecipeDashboardPage() {
     if (role === "admin") {
       return (
         <ButtonUpdateStatus
-            onApproved={() => handleUpdateStatusRecipe(id, "approved", setIsLoading, setData)}
-            onRejected={() => handleUpdateStatusRecipe(id, "rejected", setIsLoading, setData)}
+          onApproved={() =>
+            handleUpdateStatusRecipe(id, "approved", setIsLoading, setData)
+          }
+          onRejected={() =>
+            handleUpdateStatusRecipe(id, "rejected", setIsLoading, setData)
+          }
         />
       );
     }
-  }
+  };
 
   const headers =
     role === "admin"
       ? ["No", "Image", "Title", "Status", "Action", "Update Status"]
-      : ["No", "Image", "Title", "Status", "Action"];
+      : ["No", "Image", "Title", "Ingredients", "Steps", "Status", "Action"];
 
   return (
     <DashboardLayout>

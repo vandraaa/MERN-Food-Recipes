@@ -6,7 +6,11 @@ import { getCategory } from "./lib/data";
 import ButtonActionTable from "../../../components/table/ButtonActionTable";
 import SearchInputTable from "../../../components/table/SearchInputTable";
 import AddButtonTable from "../../../components/table/AddButtonTable";
-import { handleAddCategory, handleDeleteCategory, handleEditCategory } from "./lib/action";
+import {
+  handleAddCategory,
+  handleDeleteCategory,
+  handleEditCategory,
+} from "./lib/action";
 import PopupForm from "../../../components/form/popupForm";
 
 export default function CategoryDashboardPage() {
@@ -14,13 +18,16 @@ export default function CategoryDashboardPage() {
   const [data, setData] = useState<{ id: string; name: string }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [categoryToEdit, setCategoryToEdit] = useState<{ id: string; name: string } | null>(null);
+  const [categoryToEdit, setCategoryToEdit] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const handleOpenPopup = (category?: { id: string; name: string }) => {
     if (category) {
-      setCategoryToEdit(category); 
+      setCategoryToEdit(category);
     } else {
-      setCategoryToEdit(null); 
+      setCategoryToEdit(null);
     }
     setIsPopupOpen(true);
   };
@@ -33,7 +40,12 @@ export default function CategoryDashboardPage() {
 
   const handleEdit = async (formData: { [key: string]: string }) => {
     if (categoryToEdit) {
-      await handleEditCategory(categoryToEdit.id, formData, setData, setIsLoading);
+      await handleEditCategory(
+        categoryToEdit.id,
+        formData,
+        setData,
+        setIsLoading
+      );
       handleClosePopup();
     }
   };
@@ -73,7 +85,7 @@ export default function CategoryDashboardPage() {
           onChange={setSearchQuery}
           placeholder="Search..."
         />
-        <AddButtonTable onClick={handleOpenPopup} label="Add Category" />
+        <AddButtonTable onClick={() => handleOpenPopup()} label="Add Category" />
       </div>
 
       <Table
@@ -89,7 +101,7 @@ export default function CategoryDashboardPage() {
       />
 
       <PopupForm
-        title="Add New Category"
+        title={categoryToEdit ? "Edit Category" : "Add New Category"}
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
         onSubmit={categoryToEdit ? handleEdit : handleAdd}
@@ -100,7 +112,7 @@ export default function CategoryDashboardPage() {
             placeholder: "Enter category name",
             name: "name",
             defaultValue: categoryToEdit ? categoryToEdit.name : "",
-          }
+          },
         ]}
       />
     </DashboardLayout>

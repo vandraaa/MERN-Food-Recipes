@@ -14,6 +14,10 @@ import PendingRecipeDashboardPage from "../pages/Dashboard/PendingRecipeContent/
 import RejectedRecipeDashboardPage from "../pages/Dashboard/RejectedRecipeContent/RejectedRecipePage";
 import CreateRecipeDashboardPage from "../pages/Dashboard/CreateRecipeContent/CreateRecipePage";
 import DraftRecipeDashboardPage from "../pages/Dashboard/DraftRecipeContent/DraftRecipePage";
+import DetailRecipeDashboardPage from "../pages/Dashboard/DetailRecipeContent/DetailRecipeDashboardPage";
+import EditRecipeDashboardPage from "../pages/Dashboard/EditRecipeContent/EditRecipePage";
+import IngredientsRecipeDashboardPage from "../pages/Dashboard/IngredientsRecipeContent/IngredientsRecipePage";
+import StepsRecipeDashboardPage from "../pages/Dashboard/StepsRecipeContent/StepsRecipePage";
 
 const RoutesProvider = () => {
   const { isAuthenticated, role } = useAuth();
@@ -85,6 +89,36 @@ const RoutesProvider = () => {
       ),
     },
     {
+      path: "/dashboard/recipe/ingredients/:id",
+      element: (
+        <ProtectedRoute
+          element={<IngredientsRecipeDashboardPage />}
+          isAllowed={isAuthenticated && role === "author"}
+          redirectTo="/dashboard"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/recipe/steps/:id",
+      element: (
+        <ProtectedRoute
+          element={<StepsRecipeDashboardPage />}
+          isAllowed={isAuthenticated && role === "author"}
+          redirectTo="/dashboard"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/recipe/edit/:id",
+      element: (
+        <ProtectedRoute
+          element={<EditRecipeDashboardPage />}
+          isAllowed={isAuthenticated && role === "author"}
+          redirectTo="/dashboard"
+        />
+      ),
+    },
+    {
       path: "/dashboard/approved-recipes",
       element: (
         <ProtectedRoute
@@ -120,6 +154,16 @@ const RoutesProvider = () => {
         <ProtectedRoute
           element={<DraftRecipeDashboardPage />}
           isAllowed={isAuthenticated && role === "author"}
+          redirectTo="/dashboard"
+        />
+      ),
+    },
+    {
+      path: "/dashboard/detail-recipe/:id",
+      element: (
+        <ProtectedRoute
+          element={<DetailRecipeDashboardPage />}
+          isAllowed={isAuthenticated}
           redirectTo="/dashboard"
         />
       ),
