@@ -83,7 +83,7 @@ export default function DraftRecipeDashboardPage() {
   const renderUpdateStatus = (id: string) => {
     return (
       <ButtonUpdateStatus
-        onApply={() =>
+        onDraftApply={() =>
           handleUpdateStatusRecipe(id, "pending", setIsLoading, setData)
         }
       />

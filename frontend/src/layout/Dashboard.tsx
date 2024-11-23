@@ -11,7 +11,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <SidebarDashboard />
       </div>
 
-      <main className="flex-1 md:ml-64 bg-gray-100 p-4">
+      <main className="flex-1 md:ml-64 bg-gray-100 p-4 overflow-x-hidden">
         <NavbarDashboard user={user} role={role} />
 
         <div className="p-6 mt-6 bg-white shadow-md rounded-md">

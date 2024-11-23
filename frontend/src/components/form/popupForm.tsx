@@ -25,6 +25,7 @@ export default function PopupForm({
 }: PopupFormProps) {
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [animateOpen, setAnimateOpen] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (isOpen) {
@@ -43,10 +44,27 @@ export default function PopupForm({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    if (value.trim() !== "") {
+      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors: { [key: string]: string } = {};
+
+    fields.forEach((field) => {
+      if (!formData[field.name]?.trim()) {
+        newErrors[field.name] = "This field is required";
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     onSubmit(formData);
     onClose();
   };
@@ -85,6 +103,7 @@ export default function PopupForm({
                 name={field.name}
                 onChange={handleInputChange}
                 classnames="mb-5"
+                error={errors[field.name]}
               />
             ))}
           </div>

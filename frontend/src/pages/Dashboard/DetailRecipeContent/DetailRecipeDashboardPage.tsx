@@ -70,7 +70,7 @@ export default function DetailRecipeDashboardPage() {
           <ul className="list-item list-inside mt-1 sm:mt-2">
             {data.ingredients.map((ingredient) => (
               <li key={ingredient._id} className="font-semibold text-[10px] sm:text-sm">
-                {ingredient.name} ({ingredient.quantity})
+                {ingredient.name} <span className="text-gray-700">({ingredient.quantity})</span>
               </li>
             ))}
           </ul>
