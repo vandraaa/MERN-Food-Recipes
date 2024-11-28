@@ -2,7 +2,7 @@ import ProtectedRoute from "../components/protected/ProtectedRoute";
 import { useAuth } from "../context/AuthContext";
 import { useRoutes } from "react-router-dom";
 
-import HomePage from "../pages/Home/Home";
+import HomePage from "../pages/Public/Home/Home";
 import SignIn from "../pages/Auth/Sign-in";
 import SignUp from "../pages/Auth/Sign-up";
 import PageNotFound from "../pages/Error/404";
@@ -26,7 +26,6 @@ const RoutesProvider = () => {
     {
       path: "/",
       element: <HomePage />,
-      errorElement: <PageNotFound />,
     },
     {
       path: "/sign-in",
@@ -168,6 +167,11 @@ const RoutesProvider = () => {
         />
       ),
     },
+    // Not Found
+    {
+      path: "*",
+      element: <PageNotFound />
+    }
   ];
 
   return useRoutes(routes);

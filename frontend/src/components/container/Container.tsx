@@ -8,7 +8,7 @@ interface ContainerProps {
 export default function Container({ children, className = '' }: ContainerProps) {
   return (
     <div
-      className={`w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] mx-auto p-4 md:p-6 ${className}`}
+      className={`w-[95%] sm:w-[90%] md:w-[85%] lg:w-[85%] mx-auto p-4 md:p-6 ${className}`}
     >
       {children}
     </div>
