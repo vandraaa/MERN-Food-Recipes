@@ -57,7 +57,7 @@ export const getFeedbackByRecipeId = async (req, res) => {
     }
 
     try {
-        const feedback = await Feedback.find({ recipe: id });
+        const feedback = await Feedback.find({ recipe: id }).populate("user", "name image");
         if (!feedback) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Feedback not found" } });
         }

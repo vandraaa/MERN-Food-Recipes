@@ -212,6 +212,32 @@ export const editRecipe = async (req, res) => {
     }
 }
 
+// TRENDING RECIPE
+export const trendingRecipe = async (req, res) => {
+    try {
+        const recipes = await Recipe.find({ status: 'approved' }).limit(5).populate("user", "name image").populate("category", "name").sort({ views: -1 });
+        if (!recipes) {
+            return res.status(404).json({ status: "error", error: { code: 404, message: "Recipes not found" } });
+        }
+
+        const data = recipes.map((recipe) => ({
+            id: recipe._id,
+            user: recipe.user,
+            title: recipe.title,
+            description: recipe.description,
+            image: recipe.image,
+            servings: recipe.servings,
+            cooking_time: recipe.cooking_time,
+            category: recipe.category
+        }));
+
+        res.status(200).json({ status: "success", data, message: "Recipes found" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ status: "error", error: { code: 500, message: e.message } });
+    }
+}
+
 // DELETE RECIPES
 export const deleteRecipe = async (req, res) => {
     const { id } = req.params;
