@@ -1,10 +1,10 @@
-interface IngredientsType {
+export interface IngredientsType {
   _id: string;
   name: string;
   quantity: string;
 }
 
-interface StepsType {
+export interface StepsType {
   _id: string;
   step_number: string;
   instruction: string;
@@ -21,6 +21,7 @@ export interface RecipeDetailType {
   };
   category: {
     name: string;
+    _id: string;
   }
   title: string;
   description: string;

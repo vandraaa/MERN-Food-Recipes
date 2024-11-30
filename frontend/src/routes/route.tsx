@@ -18,6 +18,7 @@ import DetailRecipeDashboardPage from "../pages/Dashboard/DetailRecipeContent/De
 import EditRecipeDashboardPage from "../pages/Dashboard/EditRecipeContent/EditRecipePage";
 import IngredientsRecipeDashboardPage from "../pages/Dashboard/IngredientsRecipeContent/IngredientsRecipePage";
 import StepsRecipeDashboardPage from "../pages/Dashboard/StepsRecipeContent/StepsRecipePage";
+import DetailRecipe from "../pages/Public/DetailRecipe/DetailRecipe";
 
 const RoutesProvider = () => {
   const { isAuthenticated, role } = useAuth();
@@ -26,6 +27,10 @@ const RoutesProvider = () => {
     {
       path: "/",
       element: <HomePage />,
+    },
+    {
+      path: "/detail-recipe/:id",
+      element: <DetailRecipe />,
     },
     {
       path: "/sign-in",
