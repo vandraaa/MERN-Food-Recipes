@@ -65,7 +65,7 @@ export const getFeedbackByRecipeId = async (req, res) => {
         const data = feedback.map((feedback) => {
             return {
                 id: feedback._id,
-                userId: feedback.user,
+                user: feedback.user,
                 recipeId: feedback.recipe,
                 rating: feedback.rating,
                 comment: feedback.comment,
@@ -91,6 +91,10 @@ export const deleteFeedback = async (req, res) => {
         const feedback = await Feedback.findById(id);
         if (!feedback) {
             return res.status(404).json({ status: "error", error: { code: 404, message: "Feedback not found" } });
+        }
+
+        if (feedback.user.id !== req.user.id && req.user.role !== "admin") {
+            return res.status(401).json({ status: "error", error: { code: 401, message: "Unauthorized" } });
         }
 
         await Feedback.findByIdAndDelete(id);
