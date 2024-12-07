@@ -11,11 +11,16 @@ import Breadcrumb from "./components/Breadcrumb";
 import BreadcrumbSkeleton from "./skeleton/BreadcrumbSkeleton";
 import RecipeSteps from "./components/RecipeSteps";
 import RecipeStepsSkeleton from "./skeleton/RecipeStepsSkeleton";
+import RecipeNotFound from "./components/RecipeNotFound";
+import RecipeComments from "./components/RecipeComment";
+import { FeedbackType } from "./lib/type";
+import { getCommentByRecipeId } from "./lib/data";
 
 export default function DetailRecipe() {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<RecipeDetailType | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackType[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +28,9 @@ export default function DetailRecipe() {
       setLoading(true);
       try {
         const res = await getDetailRecipe(id);
+        const feedbackRes = await getCommentByRecipeId(id);
         setData(res.data);
+        setFeedback(feedbackRes.data);
       } catch (e) {
         console.error(e);
         setData(null);
@@ -39,11 +46,7 @@ export default function DetailRecipe() {
     return (
       <div className="bg-white">
         <Navbar />
-        <Container>
-          <div className="pt-20 md:pt-28 lg:pt-40 text-center text-gray-500 text-lg">
-            Recipe Not Found
-          </div>
-        </Container>
+        <RecipeNotFound />
       </div>
     );
   }
@@ -64,6 +67,7 @@ export default function DetailRecipe() {
               <Breadcrumb category={data!.category} recipeTitle={data!.title} />
               <RecipeDetails data={data!} />
               <RecipeSteps data={data!} />
+              <RecipeComments data={feedback!} />
             </>
           )}
         </div>
