@@ -22,8 +22,6 @@ export const getCommentByRecipeId = async (id: string) => {
     }
 }
 
-
-
 export const createNewComment = async ({ recipeId, rating, comment }: { recipeId: string, rating: number, comment: string }) => {
     try {
         const url = `${baseUrl}/recipes/feedback`;

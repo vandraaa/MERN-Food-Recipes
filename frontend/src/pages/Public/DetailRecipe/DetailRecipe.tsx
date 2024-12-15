@@ -67,7 +67,7 @@ export default function DetailRecipe() {
               <Breadcrumb category={data!.category} recipeTitle={data!.title} />
               <RecipeDetails data={data!} />
               <RecipeSteps data={data!} />
-              <RecipeComments data={feedback!} />
+              <RecipeComments data={feedback!} recipeId={data!.id} setFeedback={setFeedback} />
             </>
           )}
         </div>

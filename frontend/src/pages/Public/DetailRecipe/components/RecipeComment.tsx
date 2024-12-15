@@ -4,20 +4,34 @@ import { FeedbackType } from "../lib/type";
 import { FaStar } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
+import { useToast } from "../../../../context/ToastContext";
+import {
+  createNewComment,
+  deleteComment,
+  getCommentByRecipeId,
+} from "../lib/data";
+import Swal from "sweetalert2";
 
 interface RecipeCommentsProps {
   data: FeedbackType[];
+  recipeId: string;
+  setFeedback: React.Dispatch<React.SetStateAction<FeedbackType[]>>;
 }
 
 interface DecodedToken {
   id: string;
 }
 
-export default function RecipeComments({ data }: RecipeCommentsProps) {
+export default function RecipeComments({
+  data,
+  recipeId,
+  setFeedback,
+}: RecipeCommentsProps) {
   const [newComment, setNewComment] = useState("");
   const [newRating, setNewRating] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const { toastError, toastSuccess } = useToast();
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,8 +59,59 @@ export default function RecipeComments({ data }: RecipeCommentsProps) {
     };
   }, [openMenuId]);
 
-  const handleDelete = (commentId: string) => {
-    console.log(`Deleting comment with id: ${commentId}`);
+  const handleDelete = async (commentId: string) => {
+    try {
+      const confirmation = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      });
+
+      if (confirmation.dismiss === Swal.DismissReason.cancel) {
+        toastError("Deletion cancelled.");
+        return;
+      }
+
+      const res = await deleteComment(commentId);
+      if (res.status === "success") {
+        const updatedFeedback = await getCommentByRecipeId(recipeId);
+        setFeedback(updatedFeedback.data);
+        toastSuccess("Comment deleted successfully!");
+      }
+    } catch (e) {
+      console.error(e);
+      toastError("Error deleting comment! Try again.");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!newComment.trim() || newRating === 0) {
+      toastError("Please provide a rating and a comment.");
+      return;
+    }
+
+    try {
+      const res = await createNewComment({
+        recipeId,
+        rating: newRating,
+        comment: newComment.trim(),
+      });
+
+      if (res.status === "success") {
+        const updatedFeedback = await getCommentByRecipeId(recipeId);
+        setFeedback(updatedFeedback.data);
+        toastSuccess("Comment added successfully!");
+        setNewComment("");
+        setNewRating(0);
+      }
+    } catch (error) {
+      console.error(error);
+      toastError("Error adding comment! Try again.");
+    }
   };
 
   const renderStars = (rating: number, interactive = false) => {
@@ -107,7 +172,7 @@ export default function RecipeComments({ data }: RecipeCommentsProps) {
               )}
             </div>
             <img
-              src={feedback.user?.image.imageUrl || "/default-profile.jpg"}
+              src={feedback.user?.image?.imageUrl || "/default-profile.jpg"}
               alt={feedback.user.name}
               className="w-12 h-12 rounded-full object-cover"
             />
@@ -143,6 +208,7 @@ export default function RecipeComments({ data }: RecipeCommentsProps) {
             className="flex-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-black"
           />
           <button
+            onClick={handleSubmit}
             className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-black transition duration-300"
           >
             Submit
