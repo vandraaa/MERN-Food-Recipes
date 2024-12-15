@@ -15,6 +15,7 @@ import RecipeNotFound from "./components/RecipeNotFound";
 import RecipeComments from "./components/RecipeComment";
 import { FeedbackType } from "./lib/type";
 import { getCommentByRecipeId } from "./lib/data";
+import { RecipeCommentSkeleton } from "./skeleton/RecipeCommentSkeleton";
 
 export default function DetailRecipe() {
   const { id } = useParams<{ id: string }>();
@@ -61,6 +62,7 @@ export default function DetailRecipe() {
               <BreadcrumbSkeleton />
               <RecipeDetailsSkeleton />
               <RecipeStepsSkeleton />
+              <RecipeCommentSkeleton />
             </>
           ) : (
             <>

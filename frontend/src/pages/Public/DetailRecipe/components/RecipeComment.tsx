@@ -11,6 +11,7 @@ import {
   getCommentByRecipeId,
 } from "../lib/data";
 import Swal from "sweetalert2";
+import { useAuth } from "../../../../context/AuthContext";
 
 interface RecipeCommentsProps {
   data: FeedbackType[];
@@ -31,7 +32,9 @@ export default function RecipeComments({
   const [newRating, setNewRating] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); // Track loading state
   const { toastError, toastSuccess } = useToast();
+  const { isAuthenticated, role } = useAuth();
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,6 +64,7 @@ export default function RecipeComments({
 
   const handleDelete = async (commentId: string) => {
     try {
+      setLoading(true);
       const confirmation = await Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -73,6 +77,7 @@ export default function RecipeComments({
 
       if (confirmation.dismiss === Swal.DismissReason.cancel) {
         toastError("Deletion cancelled.");
+        setLoading(false);
         return;
       }
 
@@ -85,6 +90,8 @@ export default function RecipeComments({
     } catch (e) {
       console.error(e);
       toastError("Error deleting comment! Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,6 +102,7 @@ export default function RecipeComments({
     }
 
     try {
+      setLoading(true);
       const res = await createNewComment({
         recipeId,
         rating: newRating,
@@ -111,6 +119,8 @@ export default function RecipeComments({
     } catch (error) {
       console.error(error);
       toastError("Error adding comment! Try again.");
+    } finally {
+      setLoading(false); // Set loading to false after completion
     }
   };
 
@@ -132,12 +142,14 @@ export default function RecipeComments({
   return (
     <div className="mt-10 px-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">
+        <h2 className="md:text-2xl text-lg font-semibold text-gray-800">
           Comments ({data.length})
         </h2>
       </div>
 
-      {data.length === 0 && <p className="text-gray-600">No comments yet.</p>}
+      {data.length === 0 && (
+        <p className="text-gray-600 text-sm md:text-base">No comments yet.</p>
+      )}
 
       <div className="space-y-4">
         {data.map((feedback) => (
@@ -156,15 +168,15 @@ export default function RecipeComments({
                       )
                     }
                   >
-                    <FiMoreHorizontal size={24} />
+                    <FiMoreHorizontal className="size-4 md:size-7" />
                   </button>
                   {openMenuId === feedback.id && (
                     <div className="absolute right-5 top-8 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg">
                       <button
                         onClick={() => handleDelete(feedback.id)}
-                        className="flex items-center gap-2 p-2 w-full hover:bg-gray-100 text-red-500"
+                        className="flex items-center gap-2 p-2 w-full hover:bg-gray-100 text-red-500 text-xs md:text-sm"
                       >
-                        <MdDelete size={20} /> Delete
+                        <MdDelete /> Delete
                       </button>
                     </div>
                   )}
@@ -174,47 +186,65 @@ export default function RecipeComments({
             <img
               src={feedback.user?.image?.imageUrl || "/default-profile.jpg"}
               alt={feedback.user.name}
-              className="w-12 h-12 rounded-full object-cover"
+              className="size-8 md:size-12 rounded-full object-cover"
             />
 
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-800">
+                  <p className="font-semibold text-[11px] md:text-base text-gray-800">
                     {feedback.user.name}
                   </p>
-                  <p className="text-sm text-gray-500 flex gap-x-1">
+                  <p className="text-[10px] md:text-sm text-gray-500 flex gap-x-1">
                     {renderStars(feedback.rating)}
                   </p>
                 </div>
               </div>
-              <p className="mt-2 text-gray-600">{feedback.comment}</p>
+              <p className="mt-2 text-gray-600 md:text-base text-xs">
+                {feedback.comment}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 p-4 border border-gray-300 rounded-lg shadow-md">
-        <h3 className="text-lg font-medium text-gray-800 mb-4">
-          Add a Comment
-        </h3>
-        <div className="flex gap-4 items-center">
-          <div className="flex gap-x-1">{renderStars(newRating, true)}</div>
-          <input
-            type="text"
+      {isAuthenticated && role !== "admin" ? (
+        <div className="mt-8 px-10 py-6 border border-gray-300 rounded-lg shadow-md">
+          <h3 className="md:text-lg text-sm font-medium text-gray-800 mb-4">
+            Add a Comment
+          </h3>
+          <div className="flex gap-x-1 text-sm md:text-base mb-3">
+            {renderStars(newRating, true)}
+          </div>
+          <textarea
             placeholder="Write your comment..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            className="flex-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-black"
+            rows={4}
+            className="w-full border border-gray-300 text-sm md:text-base rounded-lg p-2 resize-none"
           />
-          <button
-            onClick={handleSubmit}
-            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-black transition duration-300"
-          >
-            Submit
-          </button>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`${
+                loading ? "bg-gray-400 cursor-not-allowed hover:bg-black" : "bg-gray-600"
+              } text-white px-6 py-2 rounded-lg text-xs md:text-sm  transition duration-300`}
+            >
+              Submit
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="mt-8 p-4 bg-red-100 border border-red-300 rounded-lg shadow-md">
+          <div className="flex items-center gap-3">
+            <span className="text-red-500 font-semibold">⚠️</span>
+            <p className="text-red-600">
+              You need to be logged in as a user to add a comment.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
