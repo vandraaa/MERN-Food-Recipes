@@ -8,10 +8,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-
 app.use(cors());
-
-const port = process.env.PORT;
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -19,7 +16,10 @@ app.get('/', (req, res) => {
 
 app.use('/api', routes);
 
-app.listen(port, async () => {
+const initializeApp = async () => {
     await connectDB();
-    console.log(`Server running at http://localhost:${port}`);
-})
+};
+
+initializeApp();
+
+export default app;
