@@ -4,5 +4,8 @@
   },
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+  },
+  "dependencies": {
+    "jwt-decode": "^4.0.0"
   }
 }
