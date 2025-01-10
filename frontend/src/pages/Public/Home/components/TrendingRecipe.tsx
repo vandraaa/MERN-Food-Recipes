@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import Container from "../../../../components/container/Container";
-import { TrendingRecipeType, getTrendingRecipe } from "../lib/data";
+import { getTrendingRecipe } from "../lib/data";
 import TrendingRecipeSkeleton from "../skeleton/TrendingRecipeSkeleton";
-import TrendingRecipeCard from "../../../../components/home/TrendingRecipeCard";
+import RecipeCard from "../../../../components/home/RecipeCard";
 import ChevronButton from "../../../../components/button/ChevronButton";
+import { TrendingRecipeType } from "../lib/type";
 
 export default function TrendingRecipe() {
   const [recipes, setRecipes] = useState<TrendingRecipeType[]>([]);
@@ -72,7 +73,7 @@ export default function TrendingRecipe() {
             {isLoading ? (
               <TrendingRecipeSkeleton />
             ) : (
-              recipes.map((recipe) => <TrendingRecipeCard recipe={recipe} />)
+              recipes.map((recipe) => <RecipeCard recipe={recipe} />)
             )}
           </div>
 

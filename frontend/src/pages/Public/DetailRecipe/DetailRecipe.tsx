@@ -24,6 +24,10 @@ export default function DetailRecipe() {
   const [feedback, setFeedback] = useState<FeedbackType[]>([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
       setLoading(true);

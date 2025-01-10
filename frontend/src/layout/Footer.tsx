@@ -65,7 +65,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="mx-auto text-center text-[10px] sm:text-xs pt-4 text-white">
-                    <p>&copy; 2024 Vandra Kicthen. All rights reserved.</p>
+                    <p>&copy; 2025 Vandra Kicthen. All rights reserved.</p>
                     <p>Created by Kevin Andra Nugroho</p>
                 </div>
             </Container>

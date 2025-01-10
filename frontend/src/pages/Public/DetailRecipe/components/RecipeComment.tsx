@@ -235,7 +235,7 @@ export default function RecipeComments({
             </button>
           </div>
         </div>
-      ) : (
+      ) : role !== "admin" && (
         <div className="mt-8 p-4 bg-red-100 border border-red-300 rounded-lg shadow-md">
           <div className="flex items-center gap-3">
             <span className="text-red-500 font-semibold">⚠️</span>

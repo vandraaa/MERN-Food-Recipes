@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios";
 import { baseUrl } from "../../../Auth/lib/action";
 
-export const getTrendingRecipe = async () => {
+export const searchRecipe = async (searchTerm: string, categoryId: string) => {
   try {
-    const url = `${baseUrl}/trending-recipes`;
+    const url = `${baseUrl}/search/recipes?q=${searchTerm}&categoryId=${categoryId}`;
     const res = await axios.get(url);
     return res.data;
   } catch (error: AxiosError | any) {
