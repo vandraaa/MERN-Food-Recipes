@@ -133,15 +133,41 @@ export const getRecipeByCategoryId = async (req, res) => {
 
 // SEARCH RECIPES BY TITLE QUERY
 export const searchRecipesByTitle = async (req, res) => {
-    const { q } = req.query;
-
-    if (!q) {
-        return res.status(400).json({ status: "error", error: { code: 400, message: "Title query parameter is required" }});
-    }
+    const { q, categoryId } = req.query;
 
     try {
-        const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }, status: 'approved' })
-                                        .limit(5)
+        if (categoryId === "all") {
+            const recipes = await Recipe.find({ status: 'approved', title: { $regex: q, $options: "i" }, }).limit(10).populate("user", "name image").populate("category", "name");
+            const data = recipes.map((recipe) => ({
+                id: recipe._id,
+                user: recipe.user,
+                title: recipe.title,
+                description: recipe.description,
+                image: recipe.image,
+                servings: recipe.servings,
+                cooking_time: recipe.cooking_time,
+                category: recipe.category
+            }));
+            return res.status(200).json({ status: "success", data, message: "Recipes found" });
+        }
+
+        if (!q) {
+            const recipes = await Recipe.find({ status: 'approved', category: categoryId }).limit(10).populate("user", "name image").populate("category", "name");
+            const data = recipes.map((recipe) => ({
+                id: recipe._id,
+                user: recipe.user,
+                title: recipe.title,
+                description: recipe.description,
+                image: recipe.image,
+                servings: recipe.servings,
+                cooking_time: recipe.cooking_time,
+                category: recipe.category
+            }));
+            return res.status(200).json({ status: "success", data, message: "Recipes found" });
+        }
+
+        const recipes = await Recipe.find({ title: { $regex: q, $options: 'i' }, status: 'approved', category: categoryId })
+                                        .limit(10)
                                         .populate("user", "name image")
                                         .populate("category", "name");
 
