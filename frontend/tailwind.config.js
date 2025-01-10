@@ -1,13 +1,11 @@
-/** @type {import('tailwindcss').Config} */
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const tailwindScrollbar = require('tailwind-scrollbar');
+
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {},
   },
-  plugins: [
-    require('tailwind-scrollbar'),
-  ],
-}
+  plugins: [tailwindScrollbar],
+};
