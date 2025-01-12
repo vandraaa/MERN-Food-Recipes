@@ -9,14 +9,6 @@ export default function ListSearchRecipe({
   data,
 }: ListSearchRecipeProps) {
 
-  if (data.length === 0) {
-    return (
-      <p className="text-center text-gray-500 mt-12">
-        No recipes found. Try searching with a different keyword.
-      </p>
-    );
-  }
-
   return (
     <div className="md:mt-12 mt-8 w-full max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-4 md:gap-x-8 md:gap-y-8 lg:gap-y-0">
       {data.map((recipe) => (

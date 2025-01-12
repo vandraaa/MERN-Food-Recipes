@@ -19,7 +19,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   return (
-    <div className="w-[12rem] h-[18rem] lg:w-[20rem] md:w-[16rem] sm:w-[16rem] lg:h-[25rem] md:h-[23rem] sm:h-[22rem] px-3 flex-shrink-0 flex flex-col">
+    <div className="w-[12rem] h-[16rem] lg:w-[20rem] md:w-[16rem] sm:w-[16rem] lg:h-[22rem] md:h-[20rem] sm:h-[22rem] px-3 flex-shrink-0 flex flex-col">
       <Link to={`/detail-recipe/${recipe.id}`} className="w-full h-[12rem] relative">
         {!isImageLoaded && (
           <div className="absolute top-0 left-0 w-full h-full bg-gray-200 rounded-lg animate-pulse"></div>
@@ -50,14 +50,6 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
               <span>{recipe.cooking_time} m</span>
             </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2 mt-auto">
-          <img
-            src={recipe.user.image.imageUrl || "/default-profile.jpg"}
-            alt={recipe.user.name}
-            className="size-6 sm:size-8 lg:size-10 rounded-full object-cover"
-          />
-          <p className="text-[0.5rem] sm:text-sm font-medium text-gray-700">{recipe.user.name}</p>
         </div>
       </div>
     </div>

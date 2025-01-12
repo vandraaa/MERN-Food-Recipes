@@ -9,6 +9,7 @@ import { TrendingRecipeType } from "../Home/lib/type";
 import { searchRecipe } from "./lib/data";
 import ListSearchRecipe from "./component/ListSearchRecipe";
 import SkeletonRecipeCardBySearch from "./skeleton/SkeletonRecipeCardBySearch";
+import { FiAlertCircle, FiRotateCcw } from "react-icons/fi";
 
 export default function SearchRecipe() {
   const navigate = useNavigate();
@@ -44,26 +45,25 @@ export default function SearchRecipe() {
     };
   }, [searchTerm]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setErrorMessage("");
-      try {
-        const res = await searchRecipe(debouncedSearchTerm, selectedCategory);
-        if (res.status === "error" && res.error.code === 404) {
-          setData([]);
-          setErrorMessage(res.error.message);
-        } else {
-          setData(res.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch recipes:", error);
-        setErrorMessage("Failed to load recipes. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const res = await searchRecipe(debouncedSearchTerm, selectedCategory);
+      if (res.status === "success") {
+        setData(res.data);
+      }
+
+    } catch (error) {
+      console.error("Failed to fetch recipes:", error);
+      setErrorMessage("Failed to load recipes. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [debouncedSearchTerm, selectedCategory]);
 
@@ -80,7 +80,10 @@ export default function SearchRecipe() {
             own recipes with the world.
           </p>
 
-          <InputSearchRecipe searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <InputSearchRecipe
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
 
           <CategoryButtons
             selectedCategory={selectedCategory}
@@ -91,8 +94,26 @@ export default function SearchRecipe() {
             <div className="md:mt-12 mt-8 w-full max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-4 md:gap-x-8 md:gap-y-8 lg:gap-y-0">
               <SkeletonRecipeCardBySearch />
             </div>
+          ) : data.length === 0 && !errorMessage ? (
+            <div className="text-center text-gray-500 my-24 lg:my-12">
+              <img
+                src="/not-found.jpg"
+                alt="notfound"
+                className="mx-auto w-1/2 lg:w-1/4"
+              />
+              No Recipes found. Try searching with a different keyword.
+            </div>
           ) : errorMessage ? (
-            <p className="text-center text-red-500 mt-4">{errorMessage}</p>
+            <div className="text-center text-gray-500 my-24 lg:my-12">
+              <div className="flex flex-col items-center">
+                <FiAlertCircle className="w-16 h-16 text-red-500 mb-4" />
+                <p className="text-base font-medium">Recipes not available.</p>
+                <button onClick={fetchData} className="flex items-center justify-center gap-2 px-4 py-2 mt-2.5 lg:mt-4 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
+                  <FiRotateCcw className="w-5 h-5" />
+                  Try Again
+                </button>
+              </div>
+            </div>
           ) : (
             <ListSearchRecipe data={data} />
           )}
