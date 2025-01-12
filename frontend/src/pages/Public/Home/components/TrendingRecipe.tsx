@@ -90,7 +90,7 @@ export default function TrendingRecipe() {
             )}
           </div>
 
-          <ChevronButton direction={"right"} onClick={() => handleScroll("right")} isVisible={canScrollRight && !isLoading && !recipes} />
+          <ChevronButton direction={"right"} onClick={() => handleScroll("right")} isVisible={canScrollRight && !isLoading} />
         </div>
       </Container>
     </div>
