@@ -24,27 +24,27 @@ export default function SearchRecipe() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const category = params.get("category");
-    if (category) {
-      setSelectedCategory(category);
-    }
+    const category = params.get("category") || "all";
+    const search = params.get("query") || "";
+    setSelectedCategory(category);
+    setSearchTerm(search);
   }, [location]);
 
   const handleCategoryClick = (id: string) => {
     setSelectedCategory(id);
-    navigate(`?category=${id}`);
+    navigate(`?query=${searchTerm}&category=${id}`);
   };
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
+      navigate(`?query=${searchTerm}&category=${selectedCategory}`);
     }, 500);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [searchTerm]);
-
+  }, [searchTerm, selectedCategory, navigate]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -53,8 +53,9 @@ export default function SearchRecipe() {
       const res = await searchRecipe(debouncedSearchTerm, selectedCategory);
       if (res.status === "success") {
         setData(res.data);
+      } else {
+        setData([]);
       }
-
     } catch (error) {
       console.error("Failed to fetch recipes:", error);
       setErrorMessage("Failed to load recipes. Please try again later.");
